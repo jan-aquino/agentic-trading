@@ -1,0 +1,2721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rallies ChatGPT Portfolio Dashboard & Ticker Selection</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased p-6 font-sans">
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Header Section -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full">Active Agent</span>
+          <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full">Robinhood MCP Ready</span>
+          <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full">SMS Confirmation Gate</span>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-white mt-2">Rallies ChatGPT Portfolio Emulation</h1>
+        <p class="text-slate-400 text-sm mt-1">Autonomous Market Analysis &middot; Quantitative Ticker Scoring &middot; Strict SNOW Exclusion</p>
+      </div>
+      <div class="text-right bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
+        <div class="text-xs text-slate-400">Total Portfolio Value</div>
+        <div class="text-2xl md:text-3xl font-black text-emerald-400">$285,618.28</div>
+        <div class="text-xs text-emerald-500 font-semibold">+185.62% Total Return (CAGR: +37.5%)</div>
+      </div>
+    </div>
+
+    <!-- Compliance Shield Alert -->
+    <div class="bg-gradient-to-r from-emerald-950/80 to-slate-900 border border-emerald-600/40 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">🛡️</div>
+        <div>
+          <h4 class="font-bold text-white text-sm">Snowflake Employee Compliance Policy Enforced</h4>
+          <p class="text-xs text-emerald-300/80">Ticker <strong>SNOW</strong> is 100% blacklisted from screening, optimization, rebalancing, and Robinhood order routing.</p>
+        </div>
+      </div>
+      <div class="px-3 py-1 bg-emerald-500/30 text-emerald-200 text-xs font-semibold rounded-lg border border-emerald-400/30">
+        Status: 0% SNOW Exposure
+      </div>
+    </div>
+
+    <!-- Navigation Anchor Links -->
+    <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
+      <a href="#ticker-selection" class="px-3.5 py-1.5 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition">🔍 Ticker Selection & Scorecards</a>
+      <a href="#kpi-summary" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 text-slate-300 hover:text-white transition">📊 Performance KPIs</a>
+      <a href="#equity-chart" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 text-slate-300 hover:text-white transition">📈 Equity Chart</a>
+      <a href="#trade-history" class="px-3.5 py-1.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-lg hover:bg-emerald-500/30 transition">📜 Trade History (901 Trades)</a>
+      <a href="#sms-preview" class="px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg hover:border-slate-700 text-slate-300 hover:text-white transition">📱 SMS Confirmation Gate</a>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: HOW INDIVIDUAL TICKERS WERE CHOSEN (DETAILED METHODOLOGY & CARDS) -->
+    <!-- ========================================================================= -->
+    <div id="ticker-selection" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl font-black text-white">How Individual Tickers Were Chosen</h2>
+            <span class="px-2.5 py-0.5 text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full font-bold">Rallies Quantitative Engine</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Multi-factor algorithmic scoring combining Thematic AI Bottlenecks, Momentum, Trend Stacking, and Volatility Sizing.</p>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
+          <button onclick="filterScorecards('ALL')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition">All Candidates (18)</button>
+          <button onclick="filterScorecards('SELECTED')" class="px-3 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-400 border border-emerald-800 rounded-lg transition">Selected (8)</button>
+          <button onclick="filterScorecards('AI_INFRA')" class="px-3 py-1.5 bg-blue-950 hover:bg-blue-900 text-blue-400 border border-blue-800 rounded-lg transition">AI Infrastructure (10)</button>
+          <button onclick="filterScorecards('CORE_DIVERSIFIED')" class="px-3 py-1.5 bg-purple-950 hover:bg-purple-900 text-purple-400 border border-purple-800 rounded-lg transition">Core Diversifiers (7)</button>
+          <button onclick="filterScorecards('RESTRICTED')" class="px-3 py-1.5 bg-rose-950 hover:bg-rose-900 text-rose-400 border border-rose-800 rounded-lg transition">Restricted (SNOW)</button>
+        </div>
+      </div>
+
+      <!-- Selection Framework Explanation Banner -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+        <div class="space-y-1">
+          <div class="font-bold text-emerald-400 flex items-center gap-1.5"><span>1.</span> Thematic AI Conviction (65%)</div>
+          <p class="text-slate-400 text-[11px] leading-relaxed">Focuses on high-margin physical bottlenecks: active cables (<strong class="text-slate-200">CRDO</strong>), custom silicon (<strong class="text-slate-200">MRVL, AVGO</strong>), AI compute (<strong class="text-slate-200">NVDA, AMD</strong>), optical hardware (<strong class="text-slate-200">APH</strong>), and AI clouds (<strong class="text-slate-200">NBIS, GOOGL</strong>).</p>
+        </div>
+        <div class="space-y-1">
+          <div class="font-bold text-blue-400 flex items-center gap-1.5"><span>2.</span> Momentum Scoring (45% Weight)</div>
+          <p class="text-slate-400 text-[11px] leading-relaxed">Weighted formula blending 20-day return, 60-day relative strength vs SPY, and 14-day RSI (momentum acceleration with overbought filter < 75).</p>
+        </div>
+        <div class="space-y-1">
+          <div class="font-bold text-purple-400 flex items-center gap-1.5"><span>3.</span> Defensive Anchors (23%)</div>
+          <p class="text-slate-400 text-[11px] leading-relaxed">Dampens drawdown via uncorrelated moats: financial scale (<strong class="text-slate-200">JPM</strong>), payment tollbooths (<strong class="text-slate-200">V</strong>), healthcare (<strong class="text-slate-200">CI</strong>), and insurance (<strong class="text-slate-200">PGR</strong>).</p>
+        </div>
+        <div class="space-y-1">
+          <div class="font-bold text-rose-400 flex items-center gap-1.5"><span>4.</span> Workplace Compliance (0% SNOW)</div>
+          <p class="text-slate-400 text-[11px] leading-relaxed">Strict workplace compliance rule for Snowflake employees. <strong class="text-rose-300">SNOW is hard-rejected</strong> and its weight is redistributed to other AI infrastructure assets.</p>
+        </div>
+      </div>
+
+      <!-- Scorecards Grid -->
+      <div id="scorecards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="NBIS" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">NBIS</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">High-Beta AI Infrastructure Growth</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Nebius Group</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">86.1<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 AI Cloud Infrastructure & Hyperscale GPU Clusters</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Pure-play European & US AI cloud infrastructure provider deploying massive high-density Nvidia H100/H200/Blackwell clusters.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">93.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 93.3%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">95.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 95.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">54.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 54.27%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$75.90</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-amber-400">83.2</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+19.4%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+55.6%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">45.7%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.0x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$69.18</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$92.70</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (13.4%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">HOLD</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #1
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="NVDA" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">NVDA</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">Core AI Hardware Anchor</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">NVIDIA Corporation</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">85.4<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 AI Compute Accelerators & CUDA Platform</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Industry standard AI compute architecture with Blackwell/Hopper architectures, NVLink network dominance, and sticky CUDA software moat.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">93.2</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 93.16%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">95.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 95.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">51.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 51.28%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$178.58</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-amber-400">82.9</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+32.3%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+112.9%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">48.7%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.1x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$165.13</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$212.21</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (13.3%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">HOLD</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #2
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="AMD" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">AMD</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">AI Compute Expansion</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Advanced Micro Devices</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">84.3<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Data Center GPUs & High-Performance Compute</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Leading second-source challenger for enterprise AI clusters with MI300X/MI350X series accelerators and EPYC CPU data center share.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">87.6</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 87.57%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">95.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 95.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">58.5</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 58.48%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$190.55</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">68.9</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+9.9%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+50.2%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">41.5%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.0x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$175.30</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$228.68</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (13.1%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">BUY</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #3
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="GOOGL" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">GOOGL</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">Mega-Cap AI Platform Anchor</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Alphabet Inc.</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">81.8<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Hyperscale AI Cloud, Gemini & Custom TPU Silicon</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Massive compute moat with custom TPU v5/v6 silicon, Gemini model stack, Google Cloud growth, and fortress balance sheet.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">76.7</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 76.68%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">95.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 95.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">70.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 70.34%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$331.67</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-amber-400">71.4</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+10.4%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+18.2%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">29.7%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.0x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$306.97</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$393.42</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (12.7%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">STRONG BUY</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #4
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="CORE_DIVERSIFIED" data-ticker="V" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">V</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">High-Quality Growth & Cash Flow</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Visa Inc.</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">80.6<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Global Digital Payment Rail Duopoly</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Toll-booth payment network model with immense gross margins (>65%), high free cash flow conversion, and inflation hedge properties.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">68.7</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 68.71%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">95.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 95.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">81.9</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 81.94%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$565.15</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-amber-400">71.1</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+6.3%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+9.5%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">18.1%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">0.9x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$536.27</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$637.35</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (8.3%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">BUY</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #5
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="CRDO" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">CRDO</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">High-Beta AI Infrastructure Growth</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Credo Technology Group</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">79.7<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 AI Connectivity & Active Electrical Cables (AEC)</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Critical bottleneck player providing high-speed ZeroFlap PCIe/PAM4 DSP interconnects connecting GPU clusters in AI data centers.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">81.6</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 81.56%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">95.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 95.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">48.8</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 48.79%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$165.77</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-amber-400">75.2</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+3.6%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+38.0%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">51.2%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">0.8x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$149.97</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$205.27</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (12.4%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">HOLD</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #6
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="CORE_DIVERSIFIED" data-ticker="CI" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">CI</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">Healthcare Moat & Volatility Buffer</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">The Cigna Group</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">76.5<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Healthcare Services & Pharmacy Benefit Management</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Stable defensive moat through Evernorth pharmacy services and commercial health plans with counter-cyclical cash flows.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">59.8</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 59.76%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">95.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 95.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">81.8</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 81.76%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$295.64</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">59.0</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+2.5%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+8.2%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">18.2%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.0x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$278.96</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$337.34</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (7.8%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">BUY</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #7
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-emerald-800/80 bg-slate-900 shadow-emerald-950/40 shadow-md flex flex-col justify-between space-y-4 scorecard-card" data-category="CORE_DIVERSIFIED" data-ticker="PGR" data-selected="true" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">PGR</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">Low-Beta Defensive Anchor</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Progressive Corporation</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-emerald-400">67.3<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Defensive Property & Casualty Insurance Underwriter</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Industry-leading combined ratio with algorithmic auto pricing, providing steady uncorrelated cash flows and inflation protection.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">55.9</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 55.9%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">75.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 75.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">79.6</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 79.56%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$230.21</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">56.2</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+0.4%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+6.4%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">20.4%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.1x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$218.39</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$259.76</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 rounded-lg">✅ ACTIVE HOLDING (6.9%)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">HOLD</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #8
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="AMZN" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">AMZN</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">Mega-Cap Cloud & E-Commerce</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Amazon.com Inc.</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">55.1<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 AWS Hyperscale AI Cloud & Trainium/Inferentia Silicon</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Global cloud leader expanding AI Bedrock platform, custom Trainium chips, and high-margin AWS enterprise workloads.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">50.8</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 50.78%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">50.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 50.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">73.8</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 73.83%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$170.79</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">50.4</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-emerald-400">+2.4%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-3.1%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">26.2%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">0.9x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-emerald-400 font-bold">EMA50 ✓</span>
+                  <span class="text-rose-400">SMA200 ✗</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$159.84</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$198.16</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">HOLD</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #9
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="CORE_DIVERSIFIED" data-ticker="JPM" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">JPM</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">Defensive Financial Anchor</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">JPMorgan Chase & Co.</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">44.7<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Diversified Financial Anchor & Wealth Management</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Highest quality US bank with dominant balance sheet, strong net interest margin resilience, and low correlation to tech drawdown.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">40.6</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 40.63%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">30.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 30.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">79.5</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 79.45%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$149.18</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">32.5</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-5.1%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-emerald-400">+4.7%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">20.5%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">0.9x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$140.21</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$171.61</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #10
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="MRVL" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">MRVL</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">AI Optical & Custom Silicon</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Marvell Technology</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">42.8<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Custom AI ASICs & Electro-Optics Interconnects</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Key designer of custom XPUs for hyperscalers and market leader in PAM4 electro-optics and active optical DSP interconnects.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">44.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 43.99%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">30.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 30.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">62.6</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 62.57%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$97.95</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">48.8</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-2.5%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-7.0%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">37.4%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">0.9x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-emerald-400 font-bold">EMA20 ✓</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$90.48</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$116.62</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #11
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="AVGO" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">AVGO</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">AI Networking & Custom Silicon</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Broadcom Inc.</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">34.6<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Custom AI Silicon (XPUs) & Tomahawk Ethernet Switching</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Dominates high-speed merchant ethernet switching chips (Tomahawk 5/Jericho3-AI) and custom AI accelerators for Tier-1 cloud providers.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">24.6</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 24.61%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">30.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 30.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">65.2</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 65.2%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$119.17</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">23.6</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-15.3%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-2.2%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">34.8%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.1x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-emerald-400 font-bold">SMA200 ✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$110.20</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$141.59</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #12
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="CORE_DIVERSIFIED" data-ticker="LDOS" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">LDOS</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">Defense & Government Tech</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Leidos Holdings</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">34.0<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Defense Technology, Intelligence & Cybersecurity</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Long-term US government defense contracting backlog with low beta, stable multi-year revenues, and sovereign AI demand.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">32.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 32.26%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">10.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 10.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">80.1</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 80.08%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$150.76</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">44.9</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-7.4%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-18.9%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">19.9%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.0x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-rose-400">SMA200 ✗</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$141.41</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$174.13</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #13
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="MSFT" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">MSFT</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">Mega-Cap AI Cloud Anchor</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Microsoft Corporation</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">33.1<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Azure AI Infrastructure & Enterprise AI Platform</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Global enterprise leader commercializing Copilot and scaling Azure AI infrastructure capacity worldwide.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">33.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 33.3%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">10.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 10.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">72.9</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 72.93%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$1121.19</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">40.0</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-6.9%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-13.6%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">27.1%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">0.9x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-rose-400">SMA200 ✗</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$1048.12</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$1303.87</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #14
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="AI_INFRA" data-ticker="APH" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">APH</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">AI Hardware Infrastructure</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Amphenol Corporation</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">32.2<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 High-Density AI Cabling, Connectors & Backplanes</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Mission-critical provider of high-density copper and optical backplane connector assemblies inside AI server architectures.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">30.8</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 30.82%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">10.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 10.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">74.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 74.03%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$49.88</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">30.2</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-9.3%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-6.1%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">26.0%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">0.8x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-rose-400">SMA200 ✗</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$47.46</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$55.93</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #15
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="CORE_DIVERSIFIED" data-ticker="LLY" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">LLY</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">Healthcare Secular Growth</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Eli Lilly and Company</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">23.8<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Metabolic Therapeutics & High-Growth Pharma</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">Massive pharmaceutical market expansion via Mounjaro/Zepbound GLP-1 franchise and Alzheimer's pipeline with secular growth.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">15.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 15.27%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">10.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 10.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">67.2</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 67.21%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$117.46</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">20.8</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-16.9%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-16.3%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">32.8%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.1x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-rose-400">SMA200 ✗</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$108.28</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$140.41</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #16
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-slate-800 bg-slate-900/90 flex flex-col justify-between space-y-4 scorecard-card" data-category="CORE_DIVERSIFIED" data-ticker="UNH" data-selected="false" data-restricted="false">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">UNH</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">Healthcare Defensive Moat</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">UnitedHealth Group</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-blue-400">23.8<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Vertically Integrated Health Insurance & Care Services</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">UnitedHealthcare health insurance combined with Optum care delivery providing high recurring revenues and low market correlation.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">15.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 15.27%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">10.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 10.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">67.2</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 67.21%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$117.46</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">20.8</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-16.9%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-16.3%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">32.8%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.1x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-rose-400">SMA200 ✗</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$108.28</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$140.41</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-semibold bg-slate-800 text-slate-400 rounded-lg">WATCHLIST CANDIDATE</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              Score #17
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="rounded-2xl border p-5 border-rose-900/60 bg-gradient-to-b from-slate-900 to-rose-950/20 flex flex-col justify-between space-y-4 scorecard-card" data-category="RESTRICTED" data-ticker="SNOW" data-selected="false" data-restricted="true">
+          <div>
+            <!-- Card Header -->
+            <div class="flex justify-between items-start gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl font-extrabold text-white tracking-wide">SNOW</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">RESTRICTED SECURITY (0% EXPOSURE)</span>
+                </div>
+                <div class="text-xs text-slate-400 font-medium mt-0.5">Snowflake Inc.</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-black text-rose-400">37.1<span class="text-xs font-normal text-slate-500">/100</span></div>
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Composite Score</div>
+              </div>
+            </div>
+
+            <!-- Thematic Focus -->
+            <div class="mt-3 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80">
+              <div class="text-[11px] font-bold text-slate-300">💡 Cloud Data Warehousing & Enterprise Data Platform</div>
+              <div class="text-xs text-slate-400 mt-1 leading-relaxed">⚠️ COMPLIANCE RESTRICTION: Snowflake is strictly excluded from all portfolio screening, ranking, and execution due to employer compliance rules.</div>
+            </div>
+
+            <!-- Quantitative Scoring Pillars Grid -->
+            <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Momentum (45%)</div>
+                <div class="text-sm font-bold text-emerald-400 mt-0.5">34.3</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-emerald-400 h-full rounded-full" style="width: 34.29%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Trend (35%)</div>
+                <div class="text-sm font-bold text-blue-400 mt-0.5">30.0</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-blue-400 h-full rounded-full" style="width: 30.0%"></div>
+                </div>
+              </div>
+              <div class="bg-slate-950/50 p-2 rounded-xl border border-slate-800/50">
+                <div class="text-[10px] text-slate-400 font-medium">Risk/Vol (20%)</div>
+                <div class="text-sm font-bold text-purple-400 mt-0.5">55.7</div>
+                <div class="w-full bg-slate-800 h-1 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-purple-400 h-full rounded-full" style="width: 55.68%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Multi-Timeframe Technical Indicators Table -->
+            <div class="mt-4 pt-3 border-t border-slate-800/60 grid grid-cols-2 gap-y-2 text-xs">
+              <div class="text-slate-400">Last Price: <span class="text-white font-mono font-semibold">$83.01</span></div>
+              <div class="text-slate-400 text-right">RSI (14): <span class="font-mono font-bold text-emerald-400">40.9</span></div>
+              <div class="text-slate-400">20d Return: <span class="font-mono font-semibold text-rose-400">-12.7%</span></div>
+              <div class="text-slate-400 text-right">60d Return: <span class="font-mono font-semibold text-rose-400">-1.4%</span></div>
+              <div class="text-slate-400">Annualized Vol: <span class="font-mono text-slate-200">44.3%</span></div>
+              <div class="text-slate-400 text-right">Volume Ratio: <span class="font-mono text-slate-200">1.0x 50d avg</span></div>
+              <div class="text-slate-400 col-span-2 flex items-center justify-between mt-1">
+                <span>Moving Averages:</span>
+                <span class="space-x-1.5 font-mono text-[11px]">
+                  <span class="text-rose-400">EMA20 ✗</span>
+                  <span class="text-rose-400">EMA50 ✗</span>
+                  <span class="text-rose-400">SMA200 ✗</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Dynamic Risk Controls (Stop-Loss & Take-Profit) -->
+            <div class="mt-3 p-2 rounded-lg bg-slate-950 border border-slate-800 text-[11px] flex justify-between items-center text-slate-300">
+              <span>🛑 Stop-Loss: <strong class="text-rose-400 font-mono">$75.61</strong></span>
+              <span>🎯 Take-Profit: <strong class="text-emerald-400 font-mono">$101.51</strong></span>
+            </div>
+          </div>
+
+          <!-- Card Footer Status -->
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 text-xs font-black bg-rose-950 text-rose-300 border border-rose-800 rounded-lg">🛡️ RESTRICTED (SNOW)</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>
+            </div>
+            <div class="text-[11px] font-medium text-slate-400">
+              🛡️ Blacklisted
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: PERFORMANCE KPIS & BENCHMARKS -->
+    <!-- ========================================================================= -->
+    <div id="kpi-summary" class="grid grid-cols-2 md:grid-cols-6 gap-4">
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-medium">CAGR</div>
+        <div class="text-xl font-bold text-white mt-1">+37.45%</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">Annualized Return</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-medium">Sharpe Ratio</div>
+        <div class="text-xl font-bold text-emerald-400 mt-1">2.22</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">Risk-Free Rate: 4.0%</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-medium">Max Drawdown</div>
+        <div class="text-xl font-bold text-rose-400 mt-1">-14.24%</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">Calmar: 2.63</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-medium">Alpha vs SPY</div>
+        <div class="text-xl font-bold text-emerald-400 mt-1">+33.53%</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">Beta: -0.04</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-medium">Annual Volatility</div>
+        <div class="text-xl font-bold text-slate-200 mt-1">12.35%</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">SPY: 15.2% | QQQ: 19.8%</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+        <div class="text-xs text-slate-400 font-medium">Total Trades</div>
+        <div class="text-xl font-bold text-blue-400 mt-1">901</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">Fees: $172.74</div>
+      </div>
+    </div>
+
+    <!-- Equity Curve Chart -->
+    <div id="equity-chart" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
+        <div>
+          <h3 class="font-bold text-lg text-white">Historical Performance vs Benchmarks</h3>
+          <p class="text-xs text-slate-400">Growth of $100,000 Starting Capital (2023 - 2026)</p>
+        </div>
+        <div class="flex items-center gap-4 text-xs font-semibold">
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span> ChatGPT Portfolio ($285,618)</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-purple-400 inline-block"></span> QQQ ($287,400)</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-slate-400 inline-block"></span> SPY ($120,220)</div>
+        </div>
+      </div>
+
+      <!-- SVG Line Chart -->
+      <div class="w-full h-64 bg-slate-950/60 rounded-xl p-2 border border-slate-800/80 relative">
+        <svg viewBox="0 0 800 280" class="w-full h-full">
+          <!-- Grid lines -->
+          <line x1="20" y1="40" x2="780" y2="40" stroke="#1e293b" stroke-dasharray="4" />
+          <line x1="20" y1="100" x2="780" y2="100" stroke="#1e293b" stroke-dasharray="4" />
+          <line x1="20" y1="160" x2="780" y2="160" stroke="#1e293b" stroke-dasharray="4" />
+          <line x1="20" y1="220" x2="780" y2="220" stroke="#1e293b" stroke-dasharray="4" />
+
+          <!-- Benchmark Lines -->
+          <polyline fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="3" points="20.0,254.3 24.4,251.5 28.8,247.1 33.3,246.5 37.7,245.7 42.1,244.7 46.5,244.5 50.9,243.9 55.3,243.8 59.8,243.2 64.2,244.7 68.6,245.0 73.0,243.3 77.4,242.5 81.9,241.3 86.3,237.4 90.7,234.6 95.1,233.7 99.5,236.7 104.0,238.8 108.4,238.9 112.8,237.6 117.2,238.3 121.6,232.6 126.0,235.3 130.5,235.0 134.9,239.2 139.3,242.5 143.7,242.1 148.1,238.2 152.6,243.1 157.0,241.8 161.4,243.0 165.8,246.2 170.2,246.3 174.7,242.6 179.1,241.6 183.5,238.3 187.9,239.0 192.3,234.1 196.7,228.4 201.2,227.6 205.6,230.2 210.0,230.7 214.4,233.7 218.8,236.6 223.3,235.0 227.7,234.5 232.1,235.0 236.5,235.6 240.9,227.9 245.3,234.8 249.8,237.5 254.2,237.7 258.6,239.0 263.0,239.9 267.4,236.4 271.9,240.9 276.3,251.2 280.7,249.4 285.1,248.6 289.5,250.1 294.0,242.9 298.4,244.6 302.8,242.4 307.2,243.0 311.6,243.8 316.0,244.8 320.5,243.5 324.9,247.1 329.3,247.1 333.7,249.3 338.1,246.8 342.6,248.9 347.0,249.7 351.4,245.8 355.8,246.5 360.2,246.0 364.7,246.1 369.1,247.7 373.5,246.4 377.9,247.4 382.3,246.6 386.7,244.4 391.2,243.0 395.6,245.3 400.0,246.6 404.4,244.2 408.8,240.2 413.3,238.2 417.7,237.1 422.1,238.7 426.5,245.7 430.9,239.5 435.3,239.5 439.8,239.4 444.2,242.2 448.6,238.9 453.0,240.0 457.4,238.1 461.9,239.3 466.3,240.6 470.7,241.6 475.1,242.5 479.5,242.5 484.0,239.5 488.4,240.4 492.8,244.2 497.2,241.3 501.6,238.1 506.0,238.6 510.5,240.4 514.9,240.3 519.3,236.0 523.7,234.0 528.1,236.1 532.6,234.0 537.0,232.5 541.4,236.6 545.8,237.6 550.2,239.3 554.7,238.2 559.1,238.6 563.5,235.8 567.9,233.9 572.3,233.2 576.7,229.0 581.2,226.9 585.6,229.5 590.0,227.1 594.4,226.9 598.8,230.5 603.3,227.4 607.7,223.6 612.1,222.0 616.5,217.8 620.9,219.9 625.3,221.9 629.8,221.0 634.2,225.4 638.6,225.1 643.0,226.2 647.4,231.3 651.9,232.9 656.3,227.0 660.7,228.1 665.1,231.6 669.5,230.0 674.0,229.0 678.4,226.3 682.8,224.6 687.2,220.6 691.6,226.3 696.0,221.7 700.5,224.5 704.9,227.3 709.3,228.2 713.7,229.8 718.1,226.3 722.6,228.3 727.0,227.8 731.4,224.9 735.8,227.0 740.2,225.5 744.7,223.5 749.1,222.0 753.5,224.3 757.9,226.9 762.3,230.6 766.7,229.7 771.2,232.1 775.6,229.9 780.0,229.6" opacity="0.7" />
+          <polyline fill="none" stroke="#c084fc" stroke-width="2.5" points="20.0,247.6 24.4,244.2 28.8,242.7 33.3,233.7 37.7,225.0 42.1,227.8 46.5,236.5 50.9,247.0 55.3,244.6 59.8,240.3 64.2,237.4 68.6,230.6 73.0,231.1 77.4,237.3 81.9,240.6 86.3,229.6 90.7,228.6 95.1,229.8 99.5,228.4 104.0,234.3 108.4,235.5 112.8,232.9 117.2,224.9 121.6,224.8 126.0,216.5 130.5,224.4 134.9,220.7 139.3,223.5 143.7,216.9 148.1,218.4 152.6,217.8 157.0,214.2 161.4,213.8 165.8,208.3 170.2,202.2 174.7,201.1 179.1,202.5 183.5,200.9 187.9,198.4 192.3,198.2 196.7,195.0 201.2,182.4 205.6,178.1 210.0,181.0 214.4,174.5 218.8,175.8 223.3,180.3 227.7,176.9 232.1,172.6 236.5,174.4 240.9,173.4 245.3,171.1 249.8,180.2 254.2,185.5 258.6,187.7 263.0,176.0 267.4,173.8 271.9,164.8 276.3,159.4 280.7,162.4 285.1,155.0 289.5,162.7 294.0,153.5 298.4,145.6 302.8,148.2 307.2,148.6 311.6,146.0 316.0,153.8 320.5,156.9 324.9,151.0 329.3,145.2 333.7,141.8 338.1,139.6 342.6,140.6 347.0,143.7 351.4,144.8 355.8,142.5 360.2,158.0 364.7,160.5 369.1,152.1 373.5,147.2 377.9,136.8 382.3,133.7 386.7,125.0 391.2,122.9 395.6,125.6 400.0,122.9 404.4,123.0 408.8,134.9 413.3,150.7 417.7,153.9 422.1,137.2 426.5,130.3 430.9,116.4 435.3,115.1 439.8,110.7 444.2,112.7 448.6,105.3 453.0,102.4 457.4,105.3 461.9,110.4 466.3,105.1 470.7,111.0 475.1,112.6 479.5,106.9 484.0,110.6 488.4,108.5 492.8,101.7 497.2,96.5 501.6,87.4 506.0,97.5 510.5,89.5 514.9,87.1 519.3,82.5 523.7,93.9 528.1,104.6 532.6,97.0 537.0,85.6 541.4,70.3 545.8,83.8 550.2,87.7 554.7,97.0 559.1,95.1 563.5,96.9 567.9,88.9 572.3,89.1 576.7,83.5 581.2,76.9 585.6,72.0 590.0,83.1 594.4,87.5 598.8,102.5 603.3,91.0 607.7,94.3 612.1,110.4 616.5,104.5 620.9,107.9 625.3,110.8 629.8,102.8 634.2,108.4 638.6,111.3 643.0,108.4 647.4,104.3 651.9,102.7 656.3,101.6 660.7,110.3 665.1,104.2 669.5,100.2 674.0,97.7 678.4,93.8 682.8,88.1 687.2,76.7 691.6,74.8 696.0,73.3 700.5,65.0 704.9,60.9 709.3,58.7 713.7,52.9 718.1,52.0 722.6,53.4 727.0,49.0 731.4,57.0 735.8,43.8 740.2,48.9 744.7,54.6 749.1,52.7 753.5,51.6 757.9,47.0 762.3,36.0 766.7,30.0 771.2,33.5 775.6,36.1 780.0,35.7" opacity="0.8" />
+          <!-- Portfolio Primary Line -->
+          <polyline fill="none" stroke="#10b981" stroke-width="3.5" points="20.0,254.2 24.4,252.0 28.8,250.5 33.3,249.8 37.7,248.7 42.1,245.8 46.5,246.7 50.9,245.6 55.3,246.9 59.8,247.0 64.2,248.1 68.6,248.1 73.0,247.7 77.4,248.0 81.9,248.4 86.3,246.9 90.7,246.5 95.1,245.1 99.5,245.9 104.0,242.7 108.4,241.5 112.8,241.9 117.2,239.8 121.6,233.8 126.0,237.7 130.5,236.5 134.9,233.9 139.3,229.8 143.7,224.5 148.1,226.9 152.6,226.2 157.0,227.7 161.4,226.0 165.8,222.7 170.2,221.9 174.7,221.2 179.1,220.4 183.5,219.7 187.9,220.6 192.3,218.2 196.7,216.5 201.2,213.3 205.6,209.7 210.0,210.7 214.4,207.2 218.8,210.3 223.3,213.9 227.7,213.3 232.1,211.0 236.5,202.9 240.9,202.8 245.3,197.7 249.8,194.2 254.2,190.0 258.6,186.0 263.0,190.3 267.4,188.9 271.9,183.3 276.3,183.4 280.7,179.1 285.1,182.3 289.5,176.7 294.0,179.4 298.4,177.5 302.8,176.8 307.2,175.1 311.6,175.7 316.0,174.8 320.5,175.4 324.9,172.9 329.3,171.3 333.7,171.0 338.1,166.0 342.6,162.8 347.0,166.9 351.4,167.9 355.8,165.6 360.2,164.3 364.7,160.7 369.1,155.7 373.5,153.4 377.9,149.6 382.3,137.9 386.7,138.9 391.2,137.2 395.6,138.1 400.0,139.8 404.4,138.2 408.8,133.8 413.3,132.8 417.7,134.1 422.1,126.9 426.5,117.5 430.9,116.9 435.3,111.2 439.8,116.1 444.2,120.2 448.6,117.2 453.0,122.6 457.4,127.2 461.9,132.1 466.3,136.9 470.7,136.0 475.1,130.0 479.5,127.4 484.0,133.0 488.4,133.1 492.8,140.3 497.2,144.7 501.6,142.5 506.0,136.7 510.5,125.9 514.9,121.9 519.3,122.5 523.7,126.8 528.1,132.9 532.6,129.6 537.0,125.9 541.4,123.1 545.8,119.3 550.2,121.3 554.7,110.1 559.1,109.2 563.5,106.0 567.9,100.4 572.3,101.6 576.7,92.5 581.2,97.1 585.6,98.8 590.0,100.1 594.4,105.8 598.8,106.4 603.3,102.6 607.7,106.0 612.1,99.1 616.5,103.3 620.9,100.6 625.3,101.5 629.8,107.1 634.2,110.3 638.6,98.9 643.0,99.1 647.4,101.1 651.9,95.9 656.3,92.5 660.7,92.3 665.1,92.1 669.5,97.6 674.0,96.1 678.4,95.9 682.8,95.5 687.2,95.5 691.6,93.4 696.0,94.6 700.5,88.0 704.9,76.8 709.3,79.5 713.7,87.3 718.1,87.7 722.6,84.0 727.0,78.5 731.4,69.7 735.8,69.5 740.2,70.5 744.7,65.7 749.1,62.7 753.5,62.2 757.9,57.8 762.3,46.5 766.7,63.3 771.2,55.2 775.6,40.5 780.0,37.8" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: TRADE HISTORY & AUDIT LOG -->
+    <!-- ========================================================================= -->
+    <div id="trade-history" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-lg text-white">Trade History & Execution Ledger</h3>
+            <span class="px-2 py-0.5 text-xs bg-slate-800 text-slate-300 rounded font-mono font-bold">66 Recent Trades</span>
+          </div>
+          <p class="text-xs text-slate-400">Complete historical audit trail of rebalancing trades, dynamic trims, and stop-loss exits.</p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="flex items-center gap-2 text-xs">
+          <input id="trade-search" type="text" placeholder="Search ticker..." class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-xs" oninput="filterTrades()" />
+          <button onclick="filterAction('ALL')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium transition">All</button>
+          <button onclick="filterAction('BUY')" class="px-2.5 py-1.5 bg-emerald-950 hover:bg-emerald-900 text-emerald-400 border border-emerald-800 rounded-lg font-medium transition">Buys</button>
+          <button onclick="filterAction('SELL')" class="px-2.5 py-1.5 bg-rose-950 hover:bg-rose-900 text-rose-400 border border-rose-800 rounded-lg font-medium transition">Sells</button>
+        </div>
+      </div>
+
+      <!-- Trade Log Table -->
+      <div class="overflow-x-auto max-h-96 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950/60">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-900 sticky top-0 border-b border-slate-800 text-slate-400 font-semibold z-10">
+            <tr>
+              <th class="py-3 px-4">Date</th>
+              <th class="py-3 px-4">Action</th>
+              <th class="py-3 px-4">Ticker</th>
+              <th class="py-3 px-4 text-right">Shares</th>
+              <th class="py-3 px-4 text-right">Price</th>
+              <th class="py-3 px-4 text-right">Total Amount</th>
+              <th class="py-3 px-4">Strategy Thesis / Reason</th>
+              <th class="py-3 px-4 text-center">Compliance</th>
+            </tr>
+          </thead>
+          <tbody id="trade-tbody" class="divide-y divide-slate-800/40">
+            
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AMD">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMD</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">61</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$179.08</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$10,923.88</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-B6565FF7) - FILLED">Live Order (RH-ORD-B6565FF7) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AMZN">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMZN</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">71</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$213.41</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$15,152.11</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-E0BF373D) - FILLED">Live Order (RH-ORD-E0BF373D) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AVGO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AVGO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">90</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$121.34</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$10,920.60</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-72BC7C6B) - FILLED">Live Order (RH-ORD-72BC7C6B) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CI">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CI</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">23</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$333.29</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$7,665.67</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-B5A421B8) - FILLED">Live Order (RH-ORD-B5A421B8) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CRDO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CRDO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">74</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$190.50</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$14,097.00</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-6BB72A78) - FILLED">Live Order (RH-ORD-6BB72A78) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="JPM">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">JPM</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">47</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$148.76</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$6,991.72</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-AA93FB8C) - FILLED">Live Order (RH-ORD-AA93FB8C) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="NVDA">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NVDA</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">64</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$208.81</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$13,363.84</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-E4CC5B05) - FILLED">Live Order (RH-ORD-E4CC5B05) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="V">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">V</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">14</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$567.90</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$7,950.60</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-45B54A9A) - FILLED">Live Order (RH-ORD-45B54A9A) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AMD">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMD</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">61</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$179.08</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$10,923.88</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-F56A4560) - FILLED">Live Order (RH-ORD-F56A4560) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AMZN">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMZN</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">71</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$213.41</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$15,152.11</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-1EFF1AE2) - FILLED">Live Order (RH-ORD-1EFF1AE2) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AVGO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AVGO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">90</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$121.34</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$10,920.60</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-A210C594) - FILLED">Live Order (RH-ORD-A210C594) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CI">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CI</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">23</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$333.29</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$7,665.67</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-D5F530D4) - FILLED">Live Order (RH-ORD-D5F530D4) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CRDO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CRDO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">74</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$190.50</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$14,097.00</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-071992A6) - FILLED">Live Order (RH-ORD-071992A6) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="JPM">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">JPM</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">47</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$148.76</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$6,991.72</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-A73E62F4) - FILLED">Live Order (RH-ORD-A73E62F4) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="NVDA">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NVDA</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">64</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$208.81</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$13,363.84</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-2E4A1833) - FILLED">Live Order (RH-ORD-2E4A1833) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="V">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-08-30</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">V</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">14</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$567.90</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$7,950.60</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Live Order (RH-ORD-533B13A3) - FILLED">Live Order (RH-ORD-533B13A3) - FILLED</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CI">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-29</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CI</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">36</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$295.50</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$10,637.92</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 11.2% (Score: 75.9)">Target allocation 11.2% (Score: 75.9)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="V">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-29</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">V</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">20</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$567.25</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$11,345.07</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 11.8% (Score: 79.5)">Target allocation 11.8% (Score: 79.5)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_EXIT" data-ticker="JPM">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-29</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">🔴 SELL</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">JPM</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">113</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$150.02</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$16,952.35</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance exit / rotation">Rebalance exit / rotation</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_TRIM" data-ticker="NVDA">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-29</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">🟡 TRIM</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NVDA</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">28</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$178.54</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$4,999.00</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance trim back to target weight">Rebalance trim back to target weight</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CRDO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-22</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CRDO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">212</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$152.94</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$32,422.52</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 12.2% (Score: 72.9)">Target allocation 12.2% (Score: 72.9)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_EXIT" data-ticker="AMZN">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-22</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">🔴 SELL</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMZN</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">177</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$164.47</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$29,109.98</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance exit / rotation">Rebalance exit / rotation</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_TRIM" data-ticker="AMD">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-22</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">🟡 TRIM</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMD</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">32</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$176.27</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$5,640.54</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance trim back to target weight">Rebalance trim back to target weight</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_TRIM" data-ticker="NVDA">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-22</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">🟡 TRIM</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NVDA</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">30</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$155.62</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$4,668.53</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance trim back to target weight">Rebalance trim back to target weight</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AMZN">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-15</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMZN</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">177</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$173.01</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$30,622.14</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 11.7% (Score: 67.5)">Target allocation 11.7% (Score: 67.5)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="NBIS">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-15</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NBIS</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">535</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$59.83</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$32,009.00</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 12.2% (Score: 70.5)">Target allocation 12.2% (Score: 70.5)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="GOOGL">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-15</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">GOOGL</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">106</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$310.28</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$32,889.16</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 12.6% (Score: 72.9)">Target allocation 12.6% (Score: 72.9)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_TRIM" data-ticker="JPM">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-15</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">🟡 TRIM</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">JPM</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">18</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$154.60</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$2,782.77</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance trim back to target weight">Rebalance trim back to target weight</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_EXIT" data-ticker="AVGO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-15</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">🔴 SELL</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AVGO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">222</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$121.99</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$27,080.80</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance exit / rotation">Rebalance exit / rotation</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_STOP_LOSS" data-ticker="NBIS">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-12</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">🛑 STOP-LOSS</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NBIS</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">569</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$56.57</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$32,188.40</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Trailing stop-loss hit @ $56.60 <= $56.82">Trailing stop-loss hit @ $56.60 <= $56.82</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_STOP_LOSS" data-ticker="CRDO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-11</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">🛑 STOP-LOSS</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CRDO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">235</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$132.38</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$31,109.32</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Trailing stop-loss hit @ $132.45 <= $136.10">Trailing stop-loss hit @ $132.45 <= $136.10</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CI">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-08</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CI</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">8</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$295.11</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$2,360.86</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 7.8% (Score: 79.4)">Target allocation 7.8% (Score: 79.4)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="NBIS">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-08</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NBIS</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">46</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$61.45</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$2,826.73</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 12.8% (Score: 73.1)">Target allocation 12.8% (Score: 73.1)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_TRIM" data-ticker="AVGO">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-08</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">🟡 TRIM</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AVGO</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">32</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$138.75</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$4,439.90</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance trim back to target weight">Rebalance trim back to target weight</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="CI">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-01</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">CI</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">64</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$290.26</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$18,576.32</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 6.9% (Score: 70.8)">Target allocation 6.9% (Score: 70.8)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_TRIM" data-ticker="NBIS">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-06-01</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">🟡 TRIM</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">NBIS</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">73</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$63.08</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$4,604.60</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance trim back to target weight">Rebalance trim back to target weight</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_STOP_LOSS" data-ticker="PGR">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-05-29</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">🛑 STOP-LOSS</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">PGR</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">81</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$226.45</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$18,341.67</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Trailing stop-loss hit @ $226.56 <= $227.03">Trailing stop-loss hit @ $226.56 <= $227.03</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="V">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-05-25</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">V</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-300 font-medium">Core Diversifier</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">3</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$513.26</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$1,539.77</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 7.8% (Score: 80.3)">Target allocation 7.8% (Score: 80.3)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="BUY" data-ticker="AMD">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-05-25</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🟢 BUY</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">AMD</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">230</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$159.20</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$36,615.90</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Target allocation 14.0% (Score: 86.1)">Target allocation 14.0% (Score: 86.1)</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors trade-row" data-action="SELL_EXIT" data-ticker="GOOGL">
+          <td class="py-3 px-4 text-slate-300 font-mono text-xs whitespace-nowrap">2026-05-25</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">🔴 SELL</span>
+          </td>
+          <td class="py-3 px-4">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-xs">GOOGL</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300 font-medium">AI Infra</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">112</td>
+          <td class="py-3 px-4 text-right font-mono text-xs text-slate-200">$300.73</td>
+          <td class="py-3 px-4 text-right font-mono text-xs font-bold text-white">$33,680.77</td>
+          <td class="py-3 px-4 text-xs text-slate-400 truncate max-w-xs" title="Rebalance exit / rotation">Rebalance exit / rotation</td>
+          <td class="py-3 px-4 text-center">
+            <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">✅ PASS</span>
+          </td>
+        </tr>
+        
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Comparative Table & SMS Simulation Preview -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Benchmark Summary Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+        <h3 class="font-bold text-base text-white mb-3">Benchmark Performance Comparison</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400">
+                <th class="pb-2">Asset</th>
+                <th class="pb-2 text-right">Return</th>
+                <th class="pb-2 text-right">CAGR</th>
+                <th class="pb-2 text-right">Sharpe</th>
+                <th class="pb-2 text-right">Max DD</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-medium">
+              <tr class="text-emerald-400 font-bold">
+                <td class="py-2.5">ChatGPT (No SNOW) ✅</td>
+                <td class="text-right">+185.6%</td>
+                <td class="text-right">+37.5%</td>
+                <td class="text-right">2.22</td>
+                <td class="text-right">-14.2%</td>
+              </tr>
+              <tr class="text-slate-300">
+                <td class="py-2.5">Nasdaq 100 (QQQ)</td>
+                <td class="text-right">+187.4%</td>
+                <td class="text-right">+35.2%</td>
+                <td class="text-right">1.35</td>
+                <td class="text-right">-18.5%</td>
+              </tr>
+              <tr class="text-slate-300">
+                <td class="py-2.5">S&P 500 (SPY)</td>
+                <td class="text-right">+20.2%</td>
+                <td class="text-right">+5.4%</td>
+                <td class="text-right">1.18</td>
+                <td class="text-right">-14.8%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Human-in-the-Loop Trade Proposal Notification Preview -->
+      <div id="sms-preview" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-base text-white">Live SMS Trade Confirmation Gate</h3>
+            <span class="text-xs text-amber-400 font-semibold px-2 py-0.5 bg-amber-500/10 rounded border border-amber-500/20">Human-In-The-Loop</span>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-300 space-y-1.5 shadow-inner">
+            <div class="text-emerald-400 font-bold">🚨 ROBINHOOD TRADE PROPOSAL</div>
+            <div>Action:      BUY 35 shares of CRDO @ ~$82.40 ($2,884.00)</div>
+            <div>Strategy:    Rallies ChatGPT (AI Infrastructure Basket)</div>
+            <div>Thesis:      Breakout above EMA20; Volume expansion; RSI 64.2</div>
+            <div>Stop-Loss:   $76.20 (-7.5%) | Take-Profit: $98.00 (+18.9%)</div>
+            <div class="text-emerald-300">Compliance:  PASSED (Snowflake SNOW strictly excluded)</div>
+            <div class="text-amber-400 mt-2 font-sans font-semibold">Reply 'CONFIRM' or 'YES' to execute on Robinhood.</div>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center justify-between text-xs text-slate-400">
+          <span>Target Mobile: Configurable in config.py</span>
+          <span class="text-emerald-400 font-medium">Auto-Timeout: 10 mins</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function filterScorecards(category) {
+      const cards = document.querySelectorAll('.scorecard-card');
+      cards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        const isSelected = card.getAttribute('data-selected');
+        const isRestricted = card.getAttribute('data-restricted');
+
+        if (category === 'ALL') {
+          card.style.display = '';
+        } else if (category === 'SELECTED') {
+          card.style.display = (isSelected === 'true') ? '' : 'none';
+        } else if (category === 'RESTRICTED') {
+          card.style.display = (isRestricted === 'true') ? '' : 'none';
+        } else if (cardCat === category && isRestricted !== 'true') {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function filterTrades() {
+      const query = document.getElementById('trade-search').value.toUpperCase();
+      const rows = document.querySelectorAll('.trade-row');
+      rows.forEach(row => {
+        const ticker = row.getAttribute('data-ticker');
+        if (ticker.includes(query)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function filterAction(action) {
+      const rows = document.querySelectorAll('.trade-row');
+      rows.forEach(row => {
+        const rowAction = row.getAttribute('data-action');
+        if (action === 'ALL' || rowAction.includes(action)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
