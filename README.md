@@ -13,6 +13,8 @@ Portfolio overview: [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) · Architecture: 
 
 ChatGPT Work deployment and connection: [docs/chatgpt-work-setup.md](docs/chatgpt-work-setup.md)
 
+Copy-ready workflow prompt: [docs/chatgpt-work-orchestration-prompt.md](docs/chatgpt-work-orchestration-prompt.md)
+
 ---
 
 ## 🌟 Key Features

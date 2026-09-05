@@ -1,5 +1,8 @@
 # Connect Trading Analysis to ChatGPT Work
 
+For the complete copy-ready orchestration instructions, see
+[ChatGPT Work orchestration prompt](chatgpt-work-orchestration-prompt.md).
+
 ## What this server is
 
 `Trading Analysis` is a proposal-only MCP server. ChatGPT Work discovers
