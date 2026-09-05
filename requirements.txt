@@ -1,2 +1,3 @@
 numpy
 pandas
+mcp[cli]>=1.26,<2

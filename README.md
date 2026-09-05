@@ -1,20 +1,29 @@
-# 🚀 Agentic Trading System (Rallies ChatGPT Portfolio Emulation)
+# 🚀 Agentic Research and Portfolio Trading System
 
-An autonomous AI trading agent that conducts quantitative market analysis, emulates the high-performing **ChatGPT Portfolio from the Rallies AI Arena**, strictly excludes **Snowflake (`SNOW`)** for workplace compliance, sends **SMS/iMessage text notifications** for trade confirmation before execution, and executes orders directly on **Robinhood** via Model Context Protocol (MCP).
+A proposal-first system in which ChatGPT Work dynamically discovers and
+researches investments, while a Trading Analysis MCP validates evidence,
+scores candidates, constructs a mandate-aware portfolio, and strictly excludes
+**Snowflake (`SNOW`)**. The original Rallies model remains a backtest baseline.
+Only Robinhood's separately authenticated official MCP can review or execute
+orders.
 
 > **Live-trading migration:** The supported integration is Robinhood's official Trading MCP (`https://agent.robinhood.com/mcp/trading`) authenticated in Codex and scoped to a dedicated Agentic account. The legacy local `robin_stocks` and private OAuth paths are deprecated and blocked from live use. See [ROBINHOOD_MCP_MIGRATION.md](ROBINHOOD_MCP_MIGRATION.md).
 
 Portfolio overview: [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) · Architecture: [docs/architecture.md](docs/architecture.md)
 
+ChatGPT Work deployment and connection: [docs/chatgpt-work-setup.md](docs/chatgpt-work-setup.md)
+
 ---
 
 ## 🌟 Key Features
 
-1. **Rallies ChatGPT Portfolio Strategy**:
-   - Focuses on high-conviction **AI Infrastructure** market leaders (`CRDO`, `NBIS`, `GOOGL`, `NVDA`, `AMD`, `MRVL`, `APH`, `AVGO`, `MSFT`, `AMZN`).
-   - Balances volatility with **Core Resilient Anchors** (`JPM`, `PGR`, `V`, `CI`, `LDOS`, `LLY`, `UNH`).
-   - Maintains a **10%–15% dynamic cash reserve** for opportunistic dip buying.
-   - Evaluates multi-timeframe momentum, trend structure (EMA 20/50, SMA 200), RSI, MACD, and ATR volatility.
+1. **Agentic Research and Portfolio Pipeline**:
+   - Accepts dynamically discovered equities and ETFs rather than a fixed list.
+   - Requires cited evidence, fundamentals, technicals, catalysts, liquidity,
+     and risk inputs for every candidate and current holding.
+   - Scores quality, growth, valuation, momentum, catalysts, and risk.
+   - Constructs portfolios under mandate, position, sector, liquidity, and cash constraints.
+   - Supports fractional sizing and can abstain when no candidate qualifies.
 
 2. **🛡️ 100% Snowflake (`SNOW`) Exclusion Policy**:
    - Hardcoded compliance engine (`agent/compliance.py`) strictly blacklists `SNOW`.
@@ -46,13 +55,16 @@ Agentic Trading/
 ├── agent/
 │   ├── compliance.py              # Strict compliance & SNOW blacklist validator
 │   ├── market_analyzer.py         # Multi-timeframe technical indicator & momentum engine
-│   ├── rallies_strategy.py        # Rallies ChatGPT Portfolio emulation & trade proposal builder
+│   ├── research_portfolio_pipeline.py # Live dynamic research and portfolio engine
+│   ├── trading_analysis_service.py # Immutable plan creation and revalidation
+│   ├── rallies_strategy.py        # Legacy backtest baseline
 │   ├── risk_manager.py            # Volatility sizing (ATR), position caps, cash buffer enforcement
 │   ├── backtester.py              # Event-driven backtest engine & performance analytics
 │   ├── mcp_robinhood.py           # Robinhood MCP client, account manager & order router
 │   ├── notifier.py                # Multi-channel text notification (iMessage, Twilio, CLI)
 │   └── orchestrator.py            # End-to-end trading loop coordinator
 ├── scripts/
+│   ├── run_analysis_mcp.py        # Streamable HTTP MCP entry point
 │   ├── run_backtest.py            # CLI tool to run historical backtests & tear-sheets
 │   ├── run_agent.py               # CLI tool to run live/dry-run trading cycles
 │   └── generate_report.py         # Generates self-contained HTML performance dashboard
@@ -92,6 +104,16 @@ python3 scripts/run_agent.py --dry-run
 python3 scripts/generate_report.py dashboard.html
 open dashboard.html
 ```
+
+### 5. Run the Trading Analysis MCP
+
+```bash
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python scripts/run_analysis_mcp.py
+```
+
+The local Streamable HTTP endpoint is `http://127.0.0.1:8000/mcp`. Deploy it
+behind authenticated HTTPS before connecting it to ChatGPT Work.
 
 ---
 

@@ -15,6 +15,7 @@ venv/
 .agents/
 data/cache/
 data/trade_history.json
+data/analysis_plans/
 
 # Local-only legacy broker bridge. The public project uses Robinhood's official MCP.
 mcp_server/

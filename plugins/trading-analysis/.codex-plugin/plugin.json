@@ -1,0 +1,18 @@
+{
+  "name": "trading-analysis",
+  "version": "0.2.0",
+  "description": "Dynamic investment research, portfolio construction, and expiring trade plans",
+  "author": {
+    "name": "Local developer"
+  },
+  "interface": {
+    "displayName": "Trading Analysis",
+    "shortDescription": "Turn researched candidates into constrained portfolio plans.",
+    "longDescription": "Validates evidence, scores dynamic candidates, constructs mandate-aware portfolios, and revalidates proposal-only trade plans. It cannot place brokerage orders.",
+    "developerName": "Local developer",
+    "category": "Finance",
+    "capabilities": ["Candidate research", "Portfolio construction", "Fractional sizing", "Pre-execution revalidation"],
+    "defaultPrompt": "Read the research requirements, discover and research candidates, then generate a mandate-aware proposal-only portfolio plan for my review."
+  },
+  "mcpServers": "./.mcp.json"
+}

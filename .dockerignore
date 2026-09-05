@@ -1,0 +1,11 @@
+.git
+.venv
+.env
+.agents
+__pycache__
+*.pyc
+.DS_Store
+data/cache
+data/analysis_plans
+data/trade_history.json
+mcp_server

@@ -3,18 +3,19 @@
 ## Portfolio summary
 
 This project is a Python-based prototype for an approval-first trading agent.
-It combines technical market analysis, a rules-based allocation model, strict
-portfolio constraints, and a human confirmation gate before any live brokerage
-action. The public version uses Robinhood's official Trading MCP as the only
-supported live integration; local Python remains a paper-trading and research
-environment.
+ChatGPT Work performs dynamic candidate discovery and evidence gathering. A
+proposal-only MCP validates the research, scores candidates across six factors,
+constructs a mandate-aware portfolio, and requires a human confirmation gate
+before the separate Robinhood MCP performs any brokerage action.
 
 ## What it demonstrates
 
-- **Multi-signal research:** daily price history is transformed into moving
-  averages, RSI, MACD, ATR, and momentum signals.
-- **Rules-based portfolio construction:** the strategy blends an AI
-  infrastructure universe with diversified core holdings and a cash target.
+- **Dynamic research:** there is no fixed live candidate universe; Work can use
+  scans, watchlists, search, and external authoritative evidence.
+- **Multi-factor selection:** quality, growth, valuation, momentum, catalysts,
+  and risk are confidence-adjusted and compared consistently.
+- **Mandate-driven construction:** objective, horizon, risk tolerance, sector
+  caps, position caps, liquidity, cash, and fractional eligibility shape trades.
 - **Risk controls:** volatility-aware sizing, a 25% single-position cap, and
   a 5% minimum cash reserve are enforced before execution.
 - **Compliance by design:** `SNOW` is prohibited in the screening,
@@ -37,7 +38,8 @@ trade history are intentionally excluded from this repository.
 
 | Area | Primary files |
 | --- | --- |
-| Strategy and analysis | `agent/market_analyzer.py`, `agent/rallies_strategy.py` |
+| Live research and portfolio engine | `agent/research_portfolio_pipeline.py`, `agent/trading_analysis_service.py` |
+| Legacy backtest baseline | `agent/market_analyzer.py`, `agent/rallies_strategy.py` |
 | Risk and compliance | `agent/risk_manager.py`, `agent/compliance.py` |
 | Workflow orchestration | `agent/orchestrator.py`, `agent/mcp_robinhood.py` |
 | Backtesting and reports | `agent/backtester.py`, `scripts/run_backtest.py`, `dashboard.html` |

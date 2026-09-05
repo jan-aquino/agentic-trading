@@ -76,12 +76,17 @@ class MarketAnalyzer:
     def __init__(
         self,
         config: Optional[StrategyConfig] = None,
-        cache_dir: Optional[str] = None
+        cache_dir: Optional[str] = None,
+        allow_synthetic_data: bool = True,
+        allow_cached_data: bool = True,
     ):
         self.config = config or DEFAULT_CONFIG.strategy
         self.cache_dir = Path(cache_dir or (Path(DEFAULT_CONFIG.workspace_dir) / "data" / "cache"))
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self._price_cache: Dict[str, pd.DataFrame] = {}
+        self.allow_synthetic_data = allow_synthetic_data
+        self.allow_cached_data = allow_cached_data
+        self.data_sources: Dict[str, str] = {}
 
     def fetch_ohlcv(
         self,
@@ -100,7 +105,10 @@ class MarketAnalyzer:
 
         cache_file = self.cache_dir / f"{ticker}_{start_date}_{end_date}.json"
 
+        use_cache = use_cache and self.allow_cached_data
+
         if use_cache and ticker in self._price_cache:
+            self.data_sources.setdefault(ticker, "memory_cache")
             return self._price_cache[ticker]
 
         if use_cache and cache_file.exists():
@@ -108,6 +116,7 @@ class MarketAnalyzer:
                 df = pd.read_json(cache_file, orient="split")
                 df.index = pd.to_datetime(df.index)
                 self._price_cache[ticker] = df
+                self.data_sources[ticker] = "disk_cache"
                 return df
             except Exception as e:
                 logger.debug(f"Failed to read cache for {ticker}: {e}")
@@ -115,8 +124,16 @@ class MarketAnalyzer:
         # Attempt to fetch live from Yahoo Finance API query
         df = self._download_yahoo_finance(ticker, start_date, end_date)
         if df is None or df.empty:
+            if not self.allow_synthetic_data:
+                raise RuntimeError(
+                    f"Authoritative market history unavailable for {ticker}; "
+                    "synthetic fallback is disabled for trading plans."
+                )
             logger.info(f"Using synthetic historical dataset generator for {ticker}")
             df = self._generate_realistic_historical_data(ticker, start_date, end_date)
+            self.data_sources[ticker] = "synthetic"
+        else:
+            self.data_sources[ticker] = "yahoo_chart"
 
         if use_cache and df is not None and not df.empty:
             try:
