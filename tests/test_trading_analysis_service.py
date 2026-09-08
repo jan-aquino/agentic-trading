@@ -18,6 +18,7 @@ class TestTradingAnalysisService(unittest.TestCase):
         self.service = TradingAnalysisService(
             store=FilePlanStore(Path(self.tmp.name)), clock=lambda: self.now,
             plan_ttl_seconds=600, max_snapshot_age_seconds=900, max_price_drift_bps=50,
+            expired_plan_revalidation_grace_seconds=0,
         )
         self.account = {"account_id": "agentic", "portfolio_equity": 500,
                         "cash_balance": 500, "buying_power": 500}
@@ -130,6 +131,17 @@ class TestTradingAnalysisService(unittest.TestCase):
             plan["plan_id"], self.account, [], quotes, self.now.isoformat())
         self.assertFalse(blocked["execution_ready"])
         self.assertTrue(any(item.startswith("PRICE_DRIFT:") for item in blocked["blockers"]))
+
+    def test_recently_expired_plan_can_pass_fresh_revalidation(self):
+        self.service.expired_plan_revalidation_grace_seconds = 86_400
+        plan = self.make_plan()
+        self.now += timedelta(seconds=601)
+        valid = self.service.validate_trade_plan(
+            plan["plan_id"], self.account, [], self.validation_quotes(plan), self.now.isoformat()
+        )
+        self.assertTrue(valid["execution_ready"])
+        self.assertNotIn("PLAN_EXPIRED", valid["blockers"])
+        self.assertIn("PLAN_EXPIRED_WITHIN_REVALIDATION_GRACE", valid["warnings"])
 
     def test_expiry_staleness_and_tampering(self):
         plan = self.make_plan()

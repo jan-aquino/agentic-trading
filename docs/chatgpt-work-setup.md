@@ -105,8 +105,10 @@ Only then place the exact reviewed order, and verify it with get_equity_orders.
 Never treat order submission as a fill. Never trade a restricted symbol. For a
 next_market_open plan, wait until the market opens, fetch fresh Robinhood
 account data and quotes, and call validate_trade_plan. Never execute directly
-from closing prices. If validation reports expiry, price drift, or any other
-blocker, generate a new plan instead of overriding it.
+from closing prices. A recently expired plan may still pass validation during
+the policy's revalidation grace window when all fresh account, quote, drift,
+and compliance checks pass. If validation returns PLAN_EXPIRED as a blocker,
+price drift, or any other blocker, generate a new plan instead of overriding it.
 ```
 
 ## Rallies beta checklist

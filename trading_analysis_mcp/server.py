@@ -19,10 +19,11 @@ service = TradingAnalysisService()
 mcp = FastMCP(
     "Trading Analysis",
     instructions=(
-        "Proposal-only research and portfolio service. It never calls a broker or executes orders. "
+    "Proposal-only research and portfolio service. It never calls a broker or executes orders. "
         "Discover candidates dynamically with a research provider such as Rallies, gather evidence "
         "and fresh Robinhood data, then submit "
-        "structured research packets. Revalidate a plan "
+    "structured research packets. A recently expired plan may be revalidated during the policy's "
+    "grace window, but only against fresh broker data. Revalidate a plan "
         "immediately before asking for approval and using the separate Robinhood Trading MCP."
     ),
     stateless_http=True,
@@ -85,10 +86,12 @@ def validate_trade_plan(
     quotes: List[Dict[str, Any]],
     market_data_as_of: str,
 ) -> Dict[str, Any]:
-    """Revalidate an unexpired plan against fresh Robinhood state and quotes.
+    """Revalidate a plan against fresh Robinhood state and quotes.
 
     A successful result authorizes only the next review step; it is not user
-    approval and does not call Robinhood. If any blocker is returned, do not trade.
+    approval and does not call Robinhood. A recently expired plan can pass only
+    during the policy grace window and will return a warning. If any blocker is
+    returned, do not trade.
     """
     return service.validate_trade_plan(
         plan_id, account, positions, quotes, market_data_as_of

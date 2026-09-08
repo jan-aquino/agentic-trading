@@ -25,7 +25,7 @@ from config import DEFAULT_CONFIG, SystemConfig
 
 
 SCHEMA_VERSION = "1.0"
-POLICY_VERSION = "research-portfolio-v3"
+POLICY_VERSION = "research-portfolio-v4"
 PLAN_ID_RE = re.compile(r"^plan_[0-9a-f]{32}$")
 
 
@@ -113,9 +113,10 @@ class TradingAnalysisService:
         store: Optional[FilePlanStore] = None,
         pipeline: Optional[ResearchPortfolioPipeline] = None,
         clock: Callable[[], datetime] = _utc_now,
-        plan_ttl_seconds: int = 600,
+        plan_ttl_seconds: int = 21_600,
         max_snapshot_age_seconds: int = 900,
         max_price_drift_bps: float = 50.0,
+        expired_plan_revalidation_grace_seconds: int = 86_400,
         next_open_max_snapshot_age_seconds: int = 345_600,
         next_open_plan_ttl_seconds: int = 345_600,
         next_open_max_annualized_volatility: float = 0.45,
@@ -131,6 +132,7 @@ class TradingAnalysisService:
         self.plan_ttl_seconds = plan_ttl_seconds
         self.max_snapshot_age_seconds = max_snapshot_age_seconds
         self.max_price_drift_bps = max_price_drift_bps
+        self.expired_plan_revalidation_grace_seconds = expired_plan_revalidation_grace_seconds
         self.next_open_max_snapshot_age_seconds = next_open_max_snapshot_age_seconds
         self.next_open_plan_ttl_seconds = next_open_plan_ttl_seconds
         self.next_open_max_annualized_volatility = next_open_max_annualized_volatility
@@ -144,8 +146,14 @@ class TradingAnalysisService:
             "restricted_tickers": sorted(self.compliance.restricted_tickers),
             "max_position_weight": self.config.compliance.max_position_weight,
             "minimum_cash_buffer": self.config.compliance.min_cash_buffer,
-            "target_cash_buffer": self.config.compliance.target_cash_buffer,
+            "default_target_cash_weight": 0.10,
+            "legacy_advisory_target_cash_buffer": self.config.compliance.target_cash_buffer,
+            "cash_policy": (
+                "minimum_cash_buffer is enforced. default_target_cash_weight is the dynamic pipeline "
+                "default. legacy_advisory_target_cash_buffer is not enforced and may be overridden."
+            ),
             "plan_ttl_seconds": self.plan_ttl_seconds,
+            "expired_plan_revalidation_grace_seconds": self.expired_plan_revalidation_grace_seconds,
             "maximum_quote_age_seconds": self.max_snapshot_age_seconds,
             "planning_modes": {
                 "immediate": {
@@ -163,6 +171,14 @@ class TradingAnalysisService:
             "candidate_universe": "dynamic; supplied by ChatGPT Work with evidence",
             "portfolio_engine": "multi_factor_research_and_mandate_driven",
             "fractional_share_sizing": True,
+            "accepted_mandate_fields": [
+                "objective", "risk_tolerance", "time_horizon_months", "target_cash_weight",
+                "maximum_position_weight", "maximum_sector_weight", "maximum_positions",
+                "minimum_candidate_score", "minimum_trade_notional",
+                "minimum_average_dollar_volume", "maximum_annualized_volatility",
+                "allow_fractional_shares", "allowed_asset_types", "excluded_sectors",
+                "factor_weights",
+            ],
             "execution_owner": "ChatGPT Work using the separately authenticated Robinhood Trading MCP",
         }
 
@@ -351,8 +367,13 @@ class TradingAnalysisService:
         blockers: List[str] = []
         warnings: List[str] = []
 
-        if now > _parse_timestamp(plan["expires_at"], "expires_at"):
-            blockers.append("PLAN_EXPIRED")
+        expires_at = _parse_timestamp(plan["expires_at"], "expires_at")
+        if now > expires_at:
+            seconds_past_expiry = (now - expires_at).total_seconds()
+            if seconds_past_expiry <= self.expired_plan_revalidation_grace_seconds:
+                warnings.append("PLAN_EXPIRED_WITHIN_REVALIDATION_GRACE")
+            else:
+                blockers.append("PLAN_EXPIRED")
         original = plan["account_snapshot"]
         if snapshot.account_id != original["account_id"]:
             blockers.append("ACCOUNT_CHANGED")
