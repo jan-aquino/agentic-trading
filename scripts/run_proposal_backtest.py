@@ -9,6 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.resolve()))
 
 from agent.proposal_backtester import ProposalPipelineBacktester
+from agent.market_analyzer import MarketAnalyzer
 
 
 def main():
@@ -17,8 +18,20 @@ def main():
     parser.add_argument("--end-date", required=True)
     parser.add_argument("--capital", type=float, default=1000.0)
     parser.add_argument("--rebalance-days", type=int, default=21)
+    parser.add_argument(
+        "--allow-synthetic", action="store_true",
+        help="Permit deterministic synthetic fallback (off by default)",
+    )
+    parser.add_argument(
+        "--use-cache", action="store_true",
+        help="Permit cached history (off by default because old caches lack source provenance)",
+    )
     args = parser.parse_args()
-    result = ProposalPipelineBacktester().run(
+    analyzer = MarketAnalyzer(
+        allow_synthetic_data=args.allow_synthetic,
+        allow_cached_data=args.use_cache,
+    )
+    result = ProposalPipelineBacktester(analyzer=analyzer).run(
         args.start_date, args.end_date, args.capital, args.rebalance_days
     )
     metrics = result.metrics

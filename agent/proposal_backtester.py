@@ -87,8 +87,9 @@ class ProposalPipelineBacktester:
 
             for date_index, current_date in enumerate(dates):
                 close_prices = {
-                    symbol: self._price_on(frame, current_date, "Close")
+                    symbol: price
                     for symbol, frame in price_data.items()
+                    if (price := self._price_on_optional(frame, current_date, "Close")) is not None
                 }
 
                 if pending is not None:
@@ -193,6 +194,11 @@ class ProposalPipelineBacktester:
         if date in frame.index:
             return float(frame.loc[date, column])
         return float(frame.loc[:date, column].iloc[-1])
+
+    @staticmethod
+    def _price_on_optional(frame: pd.DataFrame, date: pd.Timestamp, column: str) -> Optional[float]:
+        history = frame.loc[:date, column]
+        return float(history.iloc[-1]) if not history.empty else None
 
     def _execute(self, intents, open_prices, current_date, holdings, average_costs, trades, cash_box):
         for intent in sorted(intents, key=lambda item: item["side"] != "sell"):

@@ -114,6 +114,10 @@ the live MCP contract remains strict.
 python3 scripts/run_proposal_backtest.py --start-date 2026-01-01 --end-date 2026-09-10 --capital 1000
 ```
 
+This runner disables cached and synthetic data by default and fails if
+authoritative history is unavailable. Use `--use-cache` or `--allow-synthetic`
+only for explicitly labeled exploratory runs.
+
 ### 3. Run the Trading Agent (Interactive Confirmation Mode)
 ```bash
 # Interactive mode (prompts on terminal + sends text notification)
