@@ -118,6 +118,11 @@ advance to the second approval gate.
 Pass market_session to generate_trade_plan. The service rejects
 planning_mode=immediate unless market_session=regular_hours; use
 next_market_open outside the regular session.
+
+Revalidation uses separate drift limits: 50 basis points for immediate plans
+and 300 basis points for next-market-open plans. The wider overnight band is
+explicit policy for opening gaps, not a grace period or permission to bypass
+fresh validation.
 ```
 
 ## Rallies beta checklist

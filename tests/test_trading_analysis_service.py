@@ -155,6 +155,25 @@ class TestTradingAnalysisService(unittest.TestCase):
         self.assertFalse(blocked["execution_ready"])
         self.assertTrue(any(item.startswith("PRICE_DRIFT:") for item in blocked["blockers"]))
 
+    def test_next_open_uses_separate_overnight_drift_band(self):
+        plan = self.service.generate_trade_plan(
+            self.account, [], self.candidates, self.now.isoformat(),
+            planning_mode="next_market_open", market_session="closed",
+        )
+        quotes = self.validation_quotes(plan)
+        quotes[0]["price"] *= 1.02
+        accepted = self.service.validate_trade_plan(
+            plan["plan_id"], self.account, [], quotes, self.now.isoformat(),
+            market_session="regular_hours",
+        )
+        self.assertTrue(accepted["execution_ready"])
+        quotes[0]["price"] = self.validation_quotes(plan)[0]["price"] * 1.04
+        blocked = self.service.validate_trade_plan(
+            plan["plan_id"], self.account, [], quotes, self.now.isoformat(),
+            market_session="regular_hours",
+        )
+        self.assertTrue(any(item.startswith("PRICE_DRIFT:") for item in blocked["blockers"]))
+
     def test_fractional_next_open_plan_cannot_validate_while_closed(self):
         plan = self.service.generate_trade_plan(
             self.account, [], self.candidates, self.now.isoformat(),
@@ -208,6 +227,20 @@ class TestTradingAnalysisService(unittest.TestCase):
         self.assertEqual(intent["amount_type"], "whole_shares")
         self.assertEqual(intent["reference_price"], 227.685)
         self.assertEqual(intent["limit_price"], 227.69)
+
+    def test_full_fractional_exit_never_rounds_above_holding(self):
+        held = self.candidate("HELD", "technology", 33.33)
+        held["agent_conviction"] = 0
+        held["fundamentals"].update({"revenue_growth": -.5, "earnings_growth": -1})
+        held["technical"].update({"return_20d": -.5, "return_60d": -.7, "above_sma_200": False})
+        held["risk"].update({"annualized_volatility": .9, "max_drawdown": -.8})
+        quantity = 1.234567
+        plan = self.make_plan([held], positions=[
+            {"symbol": "HELD", "quantity": quantity, "current_price": 33.33}
+        ])
+        sell = plan["order_intents"][0]
+        self.assertEqual(sell["side"], "sell")
+        self.assertLessEqual(sell["quantity"], quantity)
 
     def test_revalidation_preserves_stricter_twenty_percent_position_cap(self):
         candidate = self.candidate("CAP", "technology", 199.50)

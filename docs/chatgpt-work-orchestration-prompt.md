@@ -463,6 +463,12 @@ Possible blockers include:
 - Restricted symbol
 - Account changed
 
+Price drift is mode-specific. Immediate plans retain the strict intraday band
+reported by policy. Next-market-open plans use the separately reported overnight
+band, currently 300 basis points, so ordinary opening gaps do not automatically
+invalidate a diversified plan. Never override either enforced band in the
+orchestration prompt.
+
 Warnings are not blockers, but show them before proceeding. PLAN_EXPIRED is
 always a blocker. Never extend, renew, or mutate an expired immutable plan.
 

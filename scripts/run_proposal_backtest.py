@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""Run the historical discovery and actual plan-generation simulation."""
+
+import argparse
+import sys
+from collections import Counter
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent.resolve()))
+
+from agent.proposal_backtester import ProposalPipelineBacktester
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--start-date", required=True)
+    parser.add_argument("--end-date", required=True)
+    parser.add_argument("--capital", type=float, default=1000.0)
+    parser.add_argument("--rebalance-days", type=int, default=21)
+    args = parser.parse_args()
+    result = ProposalPipelineBacktester().run(
+        args.start_date, args.end_date, args.capital, args.rebalance_days
+    )
+    metrics = result.metrics
+    generated = len(result.plan_log)
+    blocked = sum(item["status"] == "VALIDATION_BLOCKED" for item in result.plan_log)
+    abstained = sum(item["status"] == "ABSTAINED" for item in result.plan_log)
+    filled = sum(item["status"] == "SIMULATED_FILLED" for item in result.plan_log)
+    blockers = Counter(
+        blocker.split(":", 1)[0]
+        for item in result.plan_log
+        for blocker in item.get("validation", {}).get("blockers", [])
+    )
+    print("\n=== PROPOSAL PIPELINE BACKTEST ===")
+    print(f"Period: {args.start_date} to {args.end_date} | Initial: ${args.capital:,.2f}")
+    print(f"Final value: ${metrics.final_value:,.2f} | Return: {metrics.total_return_pct:+.2f}%")
+    print(f"SPY: {metrics.benchmark_spy_return_pct:+.2f}% | QQQ: {metrics.benchmark_qqq_return_pct:+.2f}%")
+    print(f"Max drawdown: {metrics.max_drawdown_pct:.2f}% | Volatility: {metrics.annualized_volatility_pct:.2f}%")
+    print(f"Plans: {generated} | Filled: {filled} | Blocked: {blocked} | Abstained: {abstained}")
+    print(f"Orders simulated: {len(result.trades_log)} | Final cash: ${result.final_cash:,.2f}")
+    if blockers:
+        print("Validation blockers: " + ", ".join(f"{name}={count}" for name, count in blockers.most_common()))
+    print("Data sources: " + ", ".join(sorted(set(result.data_sources.values()))))
+    print("Method: point-in-time market discovery → actual immutable plan generation → next-open validation → simulated fills")
+    print("Limitation: fundamentals and catalysts are unavailable and excluded from proxy scoring.\n")
+
+
+if __name__ == "__main__":
+    main()

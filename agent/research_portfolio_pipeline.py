@@ -501,7 +501,7 @@ class ResearchPortfolioPipeline:
                 order_type = "market"
                 limit_price = None
             elif fractional:
-                quantity = round(desired_notional / price, 6)
+                quantity = min(current_quantity, round(desired_notional / price, 6))
                 dollar_amount = None
                 notional = round(quantity * price, 2)
                 amount_type = "fractional_shares"

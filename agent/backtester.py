@@ -1,22 +1,22 @@
-"""
-Robust Historical Backtesting Engine for the Rallies ChatGPT Portfolio.
-Simulates realistic order execution with slippage, transaction fees,
-dynamic rebalancing, trailing stops, cash drag, and benchmark comparison (SPY, QQQ).
+"""Historical simulation for the proposal-first portfolio mandate.
+
+The backtest uses point-in-time technical scorecards as a research proxy. It
+does not claim to recreate the richer fundamental/catalyst packets gathered by
+ChatGPT Work in production.
 """
 
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 
 from agent.compliance import ComplianceEngine
 from agent.market_analyzer import MarketAnalyzer
-from agent.rallies_strategy import RalliesChatGPTStrategy
 from config import StrategyConfig, DEFAULT_CONFIG
 
 logger = logging.getLogger("agent.backtester")
@@ -54,8 +54,10 @@ class BacktestResult:
     equity_curve: pd.DataFrame  # Columns: ['Portfolio_Value', 'Cash', 'SPY_Value', 'QQQ_Value', 'Drawdown_Pct']
     monthly_returns: pd.DataFrame
     trades_log: List[Dict[str, Any]]
-    final_holdings: Dict[str, int]
+    final_holdings: Dict[str, float]
     compliance_notes: str
+    data_sources: Dict[str, str]
+    methodology_notes: List[str]
 
 
 class Backtester:
@@ -84,10 +86,25 @@ class Backtester:
         initial_capital: float = 100000.0,
         rebalance_interval_days: int = 7,
         exclude_snow: bool = True,
+        target_cash_weight: float = 0.10,
+        maximum_position_weight: float = 0.20,
+        maximum_positions: int = 10,
+        minimum_candidate_score: float = 60.0,
+        minimum_trade_notional: float = 5.0,
+        allow_fractional_shares: bool = True,
     ) -> BacktestResult:
         """
         Executes a historical backtest from start_date to end_date.
         """
+        if initial_capital <= 0:
+            raise ValueError("initial_capital must be positive")
+        if not 0.05 <= target_cash_weight <= 0.80:
+            raise ValueError("target_cash_weight must be between 5% and 80%")
+        if not 0.01 <= maximum_position_weight <= 0.20:
+            raise ValueError("maximum_position_weight must be between 1% and 20%")
+        if maximum_positions < 1:
+            raise ValueError("maximum_positions must be positive")
+
         logger.info(f"Starting backtest from {start_date} to {end_date} (Initial: ${initial_capital:,.2f})")
 
         # 1. Gather all universe tickers + benchmarks
@@ -99,10 +116,18 @@ class Backtester:
         else:
             trading_universe = universe_tickers
 
-        # Fetch historical price data for all tickers
+        # Fetch history before the requested period so indicators are warm on
+        # day one without deleting the first 50 trading days from performance.
+        requested_start = pd.Timestamp(start_date)
+        requested_end = pd.Timestamp(end_date)
+        if requested_end < requested_start:
+            raise ValueError("end_date must not precede start_date")
+        warmup_start = (requested_start - pd.Timedelta(days=370)).strftime("%Y-%m-%d")
+
+        # Fetch historical price data for all tickers.
         price_data: Dict[str, pd.DataFrame] = {}
         for t in universe_tickers:
-            df = self.analyzer.fetch_ohlcv(t, start_date=start_date, end_date=end_date)
+            df = self.analyzer.fetch_ohlcv(t, start_date=warmup_start, end_date=end_date)
             price_data[t] = df
 
         # Build master date index from SPY
@@ -110,16 +135,17 @@ class Backtester:
         if spy_df is None or spy_df.empty:
             raise RuntimeError("Failed to load benchmark SPY data.")
 
-        all_dates = spy_df.index
-        start_idx = 50  # Warmup period for 50-day moving average calculation
-        if len(all_dates) <= start_idx:
-            raise ValueError(f"Not enough data points ({len(all_dates)}) for backtest warmup.")
-
-        eval_dates = all_dates[start_idx:]
+        all_dates = pd.DatetimeIndex(spy_df.index)
+        eval_dates = all_dates[(all_dates >= requested_start) & (all_dates <= requested_end)]
+        if eval_dates.empty:
+            raise ValueError("No benchmark trading dates exist in the requested period")
+        if len(spy_df.loc[:eval_dates[0]]) < 50:
+            raise ValueError("Not enough pre-period data for indicator warmup")
 
         # Initialize simulation state
         cash = initial_capital
-        holdings: Dict[str, int] = {}
+        holdings: Dict[str, float] = {}
+        average_costs: Dict[str, float] = {}
         trailing_stops: Dict[str, float] = {}
         trades_log: List[Dict[str, Any]] = []
         equity_records: List[Dict[str, Any]] = []
@@ -155,7 +181,9 @@ class Backtester:
                     fill_price = p * (1 - self.slippage_bps / 10000.0)
                     gross = qty * fill_price
                     fee = gross * self.sec_fee_rate
+                    slippage_cost = qty * max(0.0, p - fill_price)
                     net = gross - fee
+                    realized_pnl = (fill_price - average_costs.get(ticker, fill_price)) * qty - fee
                     cash += net
                     trades_log.append({
                         "date": current_date.strftime("%Y-%m-%d"),
@@ -164,10 +192,13 @@ class Backtester:
                         "shares": qty,
                         "price": round(fill_price, 2),
                         "total": round(net, 2),
-                        "fee": round(fee, 2),
+                        "fee": round(fee, 6),
+                        "slippage_cost": round(slippage_cost, 6),
+                        "realized_pnl": round(realized_pnl, 6),
                         "reason": f"Trailing stop-loss hit @ ${p:.2f} <= ${stop_p:.2f}",
                     })
                     del holdings[ticker]
+                    average_costs.pop(ticker, None)
                     del trailing_stops[ticker]
 
             # 3. Calculate current portfolio total equity
@@ -203,42 +234,21 @@ class Backtester:
                         except Exception:
                             pass
 
-                # Rank and select top assets
-                ai_ranked = sorted(
-                    [c for c in scorecards.values() if c.category == "AI_INFRA"],
-                    key=lambda x: x.composite_rank,
-                    reverse=True
+                ranked = sorted(
+                    (
+                        card for card in scorecards.values()
+                        if card.composite_rank >= minimum_candidate_score
+                        and card.signal in ("STRONG_BUY", "BUY", "HOLD")
+                    ),
+                    key=lambda card: card.composite_rank,
+                    reverse=True,
+                )[:maximum_positions]
+                target_weights = self._allocate_capped_weights(
+                    ranked, 1.0 - target_cash_weight, maximum_position_weight
                 )
-                core_ranked = sorted(
-                    [c for c in scorecards.values() if c.category == "CORE_DIVERSIFIED"],
-                    key=lambda x: x.composite_rank,
-                    reverse=True
-                )
-
-                selected_ai = [c for c in ai_ranked if c.signal in ("STRONG_BUY", "BUY", "HOLD")][:5]
-                selected_core = [c for c in core_ranked if c.signal in ("STRONG_BUY", "BUY", "HOLD")][:3]
-
-                if not selected_ai and ai_ranked:
-                    selected_ai = ai_ranked[:3]
-                if not selected_core and core_ranked:
-                    selected_core = core_ranked[:2]
-
-                target_weights: Dict[str, float] = {}
-                ai_budget = self.config.ai_infra_target_weight
-                core_budget = self.config.core_diversified_target_weight
-
-                if selected_ai:
-                    tot = sum(c.composite_rank for c in selected_ai)
-                    for c in selected_ai:
-                        target_weights[c.ticker] = ai_budget * (c.composite_rank / tot)
-
-                if selected_core:
-                    tot = sum(c.composite_rank for c in selected_core)
-                    for c in selected_core:
-                        target_weights[c.ticker] = core_budget * (c.composite_rank / tot)
-
-                target_weights["CASH"] = self.config.cash_target_weight
-                target_weights = self.compliance.sanitize_target_weights(target_weights)
+                # Unallocated capital stays in cash when too few candidates
+                # qualify; the minimum score is never lowered to force exposure.
+                target_weights["CASH"] = 1.0 - sum(target_weights.values())
 
                 # Execute Rebalancing Trades
                 # Sells first
@@ -249,7 +259,9 @@ class Backtester:
                         fill_p = p * (1 - self.slippage_bps / 10000.0)
                         gross = qty * fill_p
                         fee = gross * self.sec_fee_rate
+                        slippage_cost = qty * max(0.0, p - fill_p)
                         net = gross - fee
+                        realized_pnl = (fill_p - average_costs.get(t, fill_p)) * qty - fee
                         cash += net
                         trades_log.append({
                             "date": current_date.strftime("%Y-%m-%d"),
@@ -258,10 +270,13 @@ class Backtester:
                             "shares": qty,
                             "price": round(fill_p, 2),
                             "total": round(net, 2),
-                            "fee": round(fee, 2),
+                            "fee": round(fee, 6),
+                            "slippage_cost": round(slippage_cost, 6),
+                            "realized_pnl": round(realized_pnl, 6),
                             "reason": "Rebalance exit / rotation",
                         })
                         del holdings[t]
+                        average_costs.pop(t, None)
                         if t in trailing_stops:
                             del trailing_stops[t]
                     elif t in target_weights:
@@ -270,12 +285,19 @@ class Backtester:
                         if cur_val > tgt_val * 1.10:  # Trim if > 10% drift
                             excess_val = cur_val - tgt_val
                             p = current_prices.get(t, 0.0)
-                            shares_to_trim = int(excess_val / p)
+                            shares_to_trim = (
+                                round(excess_val / p, 6) if allow_fractional_shares
+                                else int(excess_val / p)
+                            )
                             if shares_to_trim > 0:
                                 fill_p = p * (1 - self.slippage_bps / 10000.0)
                                 gross = shares_to_trim * fill_p
                                 fee = gross * self.sec_fee_rate
+                                slippage_cost = shares_to_trim * max(0.0, p - fill_p)
                                 net = gross - fee
+                                realized_pnl = (
+                                    (fill_p - average_costs.get(t, fill_p)) * shares_to_trim - fee
+                                )
                                 cash += net
                                 holdings[t] -= shares_to_trim
                                 trades_log.append({
@@ -283,9 +305,14 @@ class Backtester:
                                     "ticker": t,
                                     "action": "SELL_TRIM",
                                     "shares": shares_to_trim,
+                                    "order_type": "market",
+                                    "amount_type": "fractional_shares" if not float(shares_to_trim).is_integer() else "whole_shares",
+                                    "market_hours": "regular_hours",
                                     "price": round(fill_p, 2),
                                     "total": round(net, 2),
-                                    "fee": round(fee, 2),
+                                    "fee": round(fee, 6),
+                                    "slippage_cost": round(slippage_cost, 6),
+                                    "realized_pnl": round(realized_pnl, 6),
                                     "reason": "Rebalance trim back to target weight",
                                 })
 
@@ -299,18 +326,30 @@ class Backtester:
                         needed_val = tgt_val - cur_val
                         p = current_prices.get(t, 0.0)
                         fill_p = p * (1 + self.slippage_bps / 10000.0)
-                        shares_to_buy = int(needed_val / fill_p) if fill_p > 0 else 0
+                        shares_to_buy = (
+                            round(needed_val / fill_p, 6)
+                            if allow_fractional_shares and fill_p > 0
+                            else int(needed_val / fill_p) if fill_p > 0 else 0
+                        )
                         cost = shares_to_buy * fill_p
 
                         # Check available cash maintaining buffer
                         min_cash = total_equity * self.compliance.config.min_cash_buffer
                         if cost > (cash - min_cash):
-                            shares_to_buy = max(0, int((cash - min_cash) / fill_p))
+                            affordable = max(0.0, cash - min_cash)
+                            shares_to_buy = (
+                                round(affordable / fill_p, 6)
+                                if allow_fractional_shares
+                                else int(affordable / fill_p)
+                            )
                             cost = shares_to_buy * fill_p
 
-                        if shares_to_buy > 0:
+                        if shares_to_buy > 0 and cost >= minimum_trade_notional:
                             cash -= cost
-                            holdings[t] = holdings.get(t, 0) + shares_to_buy
+                            old_quantity = holdings.get(t, 0.0)
+                            old_cost = average_costs.get(t, 0.0) * old_quantity
+                            holdings[t] = old_quantity + shares_to_buy
+                            average_costs[t] = (old_cost + cost) / holdings[t]
                             # Update dynamic trailing stop
                             card = scorecards.get(t)
                             trailing_stops[t] = card.target_stop_loss if card else round(p * 0.90, 2)
@@ -319,9 +358,14 @@ class Backtester:
                                 "ticker": t,
                                 "action": "BUY",
                                 "shares": shares_to_buy,
+                                "order_type": "market" if allow_fractional_shares else "limit",
+                                "amount_type": "dollar_amount" if allow_fractional_shares else "whole_shares",
+                                "requested_dollar_amount": round(cost, 2) if allow_fractional_shares else None,
+                                "market_hours": "regular_hours",
                                 "price": round(fill_p, 2),
                                 "total": round(cost, 2),
                                 "fee": 0.0,
+                                "slippage_cost": round(shares_to_buy * max(0.0, fill_p - p), 6),
                                 "reason": f"Target allocation {wt:.1%} (Score: {scorecards[t].composite_rank:.1f})" if t in scorecards else "Target allocation",
                             })
 
@@ -380,7 +424,40 @@ class Backtester:
             trades_log=trades_log,
             final_holdings=holdings,
             compliance_notes=compliance_msg,
+            data_sources=dict(self.analyzer.data_sources),
+            methodology_notes=[
+                "Point-in-time technical scorecards proxy for production research packets.",
+                "The candidate universe is the configured historical test universe, not a survivorship-bias-free market-wide universe.",
+                "Fractional buys simulate regular-hours dollar market orders with closing-price slippage.",
+                "No broker review, approval timing, taxes, dividends, or intraday fill uncertainty is simulated.",
+            ],
         )
+
+    @staticmethod
+    def _allocate_capped_weights(candidates: List[Any], budget: float, cap: float) -> Dict[str, float]:
+        """Allocate by score without exceeding the mandate position cap."""
+        weights: Dict[str, float] = {card.ticker: 0.0 for card in candidates}
+        active = list(candidates)
+        remaining = max(0.0, budget)
+        while active and remaining > 1e-12:
+            score_total = sum(max(0.0, card.composite_rank) for card in active)
+            if score_total <= 0:
+                break
+            capped = []
+            allocated = 0.0
+            for card in active:
+                room = cap - weights[card.ticker]
+                share = remaining * card.composite_rank / score_total
+                addition = min(room, share)
+                weights[card.ticker] += addition
+                allocated += addition
+                if weights[card.ticker] >= cap - 1e-12:
+                    capped.append(card)
+            remaining -= allocated
+            if not capped:
+                break
+            active = [card for card in active if card not in capped]
+        return {ticker: weight for ticker, weight in weights.items() if weight > 0}
 
     def _calculate_metrics(
         self,
@@ -427,14 +504,19 @@ class Backtester:
 
         # Trade metrics
         total_trades = len(trades_log)
-        total_fees = sum(t.get("fee", 0.0) for t in trades_log)
+        total_fees = sum(
+            t.get("fee", 0.0) + t.get("slippage_cost", 0.0) for t in trades_log
+        )
 
-        # Win rate estimation from trade log
-        sells = [t for t in trades_log if "SELL" in t["action"]]
-        # Approximate win rate from profitable rebalance rotations
-        wins = [t for t in sells if "TRIM" in t["action"] or "PROFIT" in t.get("reason", "")]
-        win_rate = (len(wins) / len(sells) * 100) if sells else 65.0
-        profit_factor = 2.45
+        realized = [
+            float(t["realized_pnl"]) for t in trades_log if "realized_pnl" in t
+        ]
+        wins = [pnl for pnl in realized if pnl > 0]
+        losses = [pnl for pnl in realized if pnl < 0]
+        win_rate = (len(wins) / len(realized) * 100) if realized else 0.0
+        gross_profit = sum(wins)
+        gross_loss = abs(sum(losses))
+        profit_factor = gross_profit / gross_loss if gross_loss > 0 else (float("inf") if gross_profit else 0.0)
 
         return BacktestMetrics(
             initial_capital=round(initial_capital, 2),

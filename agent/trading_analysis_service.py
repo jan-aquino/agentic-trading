@@ -26,7 +26,7 @@ from config import DEFAULT_CONFIG, SystemConfig
 
 
 SCHEMA_VERSION = "1.0"
-POLICY_VERSION = "research-portfolio-v5"
+POLICY_VERSION = "research-portfolio-v6"
 PLAN_ID_RE = re.compile(r"^plan_[0-9a-f]{32}$")
 
 
@@ -117,6 +117,7 @@ class TradingAnalysisService:
         plan_ttl_seconds: int = 21_600,
         max_snapshot_age_seconds: int = 900,
         max_price_drift_bps: float = 50.0,
+        next_open_max_price_drift_bps: float = 300.0,
         next_open_max_snapshot_age_seconds: int = 345_600,
         next_open_plan_ttl_seconds: int = 345_600,
         next_open_max_annualized_volatility: float = 0.45,
@@ -132,6 +133,7 @@ class TradingAnalysisService:
         self.plan_ttl_seconds = plan_ttl_seconds
         self.max_snapshot_age_seconds = max_snapshot_age_seconds
         self.max_price_drift_bps = max_price_drift_bps
+        self.next_open_max_price_drift_bps = next_open_max_price_drift_bps
         self.next_open_max_snapshot_age_seconds = next_open_max_snapshot_age_seconds
         self.next_open_plan_ttl_seconds = next_open_plan_ttl_seconds
         self.next_open_max_annualized_volatility = next_open_max_annualized_volatility
@@ -166,10 +168,12 @@ class TradingAnalysisService:
                     "maximum_snapshot_age_seconds": self.next_open_max_snapshot_age_seconds,
                     "plan_ttl_seconds": self.next_open_plan_ttl_seconds,
                     "maximum_annualized_volatility": self.next_open_max_annualized_volatility,
+                    "maximum_price_drift_bps": self.next_open_max_price_drift_bps,
                     "requires_fresh_pre_execution_validation": True,
                 },
             },
             "maximum_price_drift_bps": self.max_price_drift_bps,
+            "immediate_maximum_price_drift_bps": self.max_price_drift_bps,
             "expiration_is_hard_blocker": True,
             "equity_order_contract": {
                 "fractional_purchase": "regular-hours market order",
@@ -426,7 +430,12 @@ class TradingAnalysisService:
                 continue
             planned_reference = float(intent.get("reference_price", intent.get("limit_price")))
             drift_bps = abs(fresh_price - planned_reference) / planned_reference * 10_000
-            if drift_bps > self.max_price_drift_bps:
+            permitted_drift_bps = (
+                self.next_open_max_price_drift_bps
+                if plan.get("planning_mode") == "next_market_open"
+                else self.max_price_drift_bps
+            )
+            if drift_bps > permitted_drift_bps:
                 blockers.append(f"PRICE_DRIFT:{symbol}:{drift_bps:.1f}_BPS")
 
             try:

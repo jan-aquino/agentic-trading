@@ -1,6 +1,6 @@
 {
   "name": "trading-analysis",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Dynamic investment research, portfolio construction, and expiring trade plans",
   "author": {
     "name": "Local developer"

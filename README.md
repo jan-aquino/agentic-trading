@@ -95,6 +95,25 @@ python3 -m unittest discover -s tests -p "test_*.py" -v
 python3 scripts/run_backtest.py --start-date 2023-01-01 --end-date 2026-06-30
 ```
 
+The backtester applies the current 10% cash target, 20% position cap, score-60
+eligibility floor, $5 minimum trade, and regular-hours fractional market-fill
+model. It uses point-in-time technical scorecards over the configured test
+universe as a proxy; it does not recreate ChatGPT Work's historical fundamental
+and catalyst research packets. For a small-account year-to-date run:
+
+```bash
+python3 scripts/run_backtest.py --start-date 2026-01-01 --end-date 2026-09-10 --capital 1000 --no-compare-snow
+```
+
+To exercise the actual immutable plan generator and next-open validator, use
+the isolated historical market proxy. This performs walk-forward discovery but
+excludes unavailable historical fundamentals and catalysts from proxy scoring;
+the live MCP contract remains strict.
+
+```bash
+python3 scripts/run_proposal_backtest.py --start-date 2026-01-01 --end-date 2026-09-10 --capital 1000
+```
+
 ### 3. Run the Trading Agent (Interactive Confirmation Mode)
 ```bash
 # Interactive mode (prompts on terminal + sends text notification)
