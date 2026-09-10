@@ -18,7 +18,6 @@ class TestTradingAnalysisService(unittest.TestCase):
         self.service = TradingAnalysisService(
             store=FilePlanStore(Path(self.tmp.name)), clock=lambda: self.now,
             plan_ttl_seconds=600, max_snapshot_age_seconds=900, max_price_drift_bps=50,
-            expired_plan_revalidation_grace_seconds=0,
         )
         self.account = {"account_id": "agentic", "portfolio_equity": 500,
                         "cash_balance": 500, "buying_power": 500}
@@ -31,7 +30,8 @@ class TestTradingAnalysisService(unittest.TestCase):
     def candidate(self, symbol, sector, price):
         return {
             "symbol": symbol, "asset_type": "equity", "sector": sector,
-            "tradable": True, "fractional_tradable": True, "price": price,
+            "tradable": True, "fractional_tradable": True,
+            "leveraged_or_inverse": False, "price": price,
             "research_as_of": self.now.isoformat(), "thesis": f"Thesis for {symbol}",
             "agent_conviction": 80,
             "evidence": [
@@ -53,7 +53,7 @@ class TestTradingAnalysisService(unittest.TestCase):
         )
 
     def validation_quotes(self, plan):
-        return [{"symbol": item["symbol"], "price": item["limit_price"]}
+        return [{"symbol": item["symbol"], "price": item["reference_price"]}
                 for item in plan["order_intents"]]
 
     def test_dynamic_candidates_and_fractional_500_account(self):
@@ -61,8 +61,11 @@ class TestTradingAnalysisService(unittest.TestCase):
         self.assertEqual(set(plan["selected_symbols"]), {"ACME", "BETA"})
         self.assertNotIn("NVDA", plan["target_weights"])
         self.assertFalse(plan["abstained"])
-        self.assertTrue(all(i["amount_type"] == "fractional_shares" for i in plan["order_intents"]))
-        self.assertTrue(all(0 < i["estimated_notional"] <= 100 for i in plan["order_intents"]))
+        self.assertTrue(all(i["amount_type"] == "dollar_amount" for i in plan["order_intents"]))
+        self.assertTrue(all(i["order_type"] == "market" for i in plan["order_intents"]))
+        self.assertTrue(all(0 < i["dollar_amount"] <= 100 for i in plan["order_intents"]))
+        self.assertTrue(all(i["market_hours"] == "regular_hours" for i in plan["order_intents"]))
+        self.assertTrue(all(i.get("idempotency_key") for i in plan["order_intents"]))
 
     def test_research_requirements_assign_source_authority(self):
         requirements = self.service.get_research_requirements()
@@ -78,7 +81,7 @@ class TestTradingAnalysisService(unittest.TestCase):
         volatile["risk"]["annualized_volatility"] = .80
         plan = self.service.generate_trade_plan(
             self.account, [], self.candidates + [volatile], closing_time.isoformat(),
-            planning_mode="next_market_open",
+            planning_mode="next_market_open", market_session="closed",
         )
         self.assertEqual(plan["planning_mode"], "next_market_open")
         self.assertIn("AFTER_HOURS_REFERENCE_PRICES", plan["warnings"])
@@ -96,11 +99,26 @@ class TestTradingAnalysisService(unittest.TestCase):
                 (self.now - timedelta(hours=1)).isoformat(),
             )
 
+    def test_immediate_mode_is_rejected_outside_regular_hours(self):
+        with self.assertRaisesRegex(AnalysisInputError, "next_market_open"):
+            self.service.generate_trade_plan(
+                self.account, [], self.candidates, self.now.isoformat(),
+                planning_mode="immediate", market_session="closed",
+            )
+
     def test_restricted_candidate_is_rejected(self):
         plan = self.make_plan(self.candidates + [self.candidate("SNOW", "technology", 40)])
         snow = next(item for item in plan["ranked_candidates"] if item["symbol"] == "SNOW")
         self.assertFalse(snow["eligible"])
         self.assertNotIn("SNOW", {item["symbol"] for item in plan["order_intents"]})
+
+    def test_leveraged_or_inverse_product_is_rejected(self):
+        leveraged = self.candidate("LEVR", "technology", 40)
+        leveraged["leveraged_or_inverse"] = True
+        plan = self.make_plan([leveraged])
+        ranked = plan["ranked_candidates"][0]
+        self.assertIn("LEVERAGED_OR_INVERSE_PRODUCT", ranked["rejection_reasons"])
+        self.assertEqual(plan["order_intents"], [])
 
     def test_weak_universe_can_abstain(self):
         weak = self.candidate("WEAK", "industrials", 20)
@@ -126,29 +144,104 @@ class TestTradingAnalysisService(unittest.TestCase):
             plan["plan_id"], self.account, [], quotes, self.now.isoformat())
         self.assertTrue(valid["execution_ready"])
         self.assertFalse(valid["can_execute_orders"])
+        self.assertEqual(
+            valid["second_approval_prompt"],
+            f"Robinhood has reviewed the exact orders for plan {plan['plan_id']}. "
+            "Do you authorize submission of these reviewed orders?",
+        )
         quotes[0]["price"] *= 1.01
         blocked = self.service.validate_trade_plan(
             plan["plan_id"], self.account, [], quotes, self.now.isoformat())
         self.assertFalse(blocked["execution_ready"])
         self.assertTrue(any(item.startswith("PRICE_DRIFT:") for item in blocked["blockers"]))
 
-    def test_recently_expired_plan_can_pass_fresh_revalidation(self):
-        self.service.expired_plan_revalidation_grace_seconds = 86_400
-        plan = self.make_plan()
-        self.now += timedelta(seconds=601)
-        valid = self.service.validate_trade_plan(
-            plan["plan_id"], self.account, [], self.validation_quotes(plan), self.now.isoformat()
+    def test_fractional_next_open_plan_cannot_validate_while_closed(self):
+        plan = self.service.generate_trade_plan(
+            self.account, [], self.candidates, self.now.isoformat(),
+            planning_mode="next_market_open", market_session="closed",
         )
-        self.assertTrue(valid["execution_ready"])
-        self.assertNotIn("PLAN_EXPIRED", valid["blockers"])
-        self.assertIn("PLAN_EXPIRED_WITHIN_REVALIDATION_GRACE", valid["warnings"])
+        result = self.service.validate_trade_plan(
+            plan["plan_id"], self.account, [], self.validation_quotes(plan),
+            self.now.isoformat(), market_session="closed",
+        )
+        self.assertFalse(result["execution_ready"])
+        self.assertIn("MARKET_NOT_OPEN_FOR_NEXT_OPEN_PLAN", result["blockers"])
+
+    def test_research_units_and_unknown_fields_are_strict(self):
+        fractional_confidence = self.candidate("UNIT", "technology", 20)
+        fractional_confidence["agent_conviction"] = .725
+        with self.assertRaisesRegex(ResearchInputError, "0-100 scale"):
+            self.make_plan([fractional_confidence])
+
+        valid_confidence = self.candidate("UNIT", "technology", 20)
+        valid_confidence["agent_conviction"] = 72.5
+        self.assertTrue(self.make_plan([valid_confidence])["ranked_candidates"])
+
+        unknown = self.candidate("UNIT", "technology", 20)
+        unknown["fundamentals"]["revenue_growth_percent"] = 30
+        with self.assertRaisesRegex(ResearchInputError, "unknown UNIT.fundamentals fields"):
+            self.make_plan([unknown])
+
+        percentage_as_whole = self.candidate("UNIT", "technology", 20)
+        percentage_as_whole["fundamentals"]["revenue_growth"] = 25
+        with self.assertRaisesRegex(ResearchInputError, "revenue_growth must be between"):
+            self.make_plan([percentage_as_whole])
+
+        bad_sentiment = self.candidate("UNIT", "technology", 20)
+        bad_sentiment["catalysts"]["sentiment"] = 75
+        with self.assertRaisesRegex(ResearchInputError, "sentiment must be between"):
+            self.make_plan([bad_sentiment])
+
+        missing_timezone = self.candidate("UNIT", "technology", 20)
+        missing_timezone["research_as_of"] = "2026-09-05T14:00:00"
+        with self.assertRaisesRegex(ResearchInputError, "include a timezone"):
+            self.make_plan([missing_timezone])
+
+    def test_whole_share_limits_use_separate_cent_price(self):
+        candidate = self.candidate("WHOLE", "technology", 227.685)
+        candidate["fractional_tradable"] = False
+        account = {"account_id": "agentic", "portfolio_equity": 5000,
+                   "cash_balance": 5000, "buying_power": 5000}
+        plan = self.service.generate_trade_plan(account, [], [candidate], self.now.isoformat())
+        intent = plan["order_intents"][0]
+        self.assertEqual(intent["order_type"], "limit")
+        self.assertEqual(intent["amount_type"], "whole_shares")
+        self.assertEqual(intent["reference_price"], 227.685)
+        self.assertEqual(intent["limit_price"], 227.69)
+
+    def test_revalidation_preserves_stricter_twenty_percent_position_cap(self):
+        candidate = self.candidate("CAP", "technology", 199.50)
+        candidate["fractional_tradable"] = False
+        account = {"account_id": "agentic", "portfolio_equity": 5000,
+                   "cash_balance": 5000, "buying_power": 5000}
+        plan = self.service.generate_trade_plan(
+            account, [], [candidate], self.now.isoformat(),
+            mandate={"maximum_position_weight": .20},
+        )
+        result = self.service.validate_trade_plan(
+            plan["plan_id"], account, [], [{"symbol": "CAP", "price": 200.298}],
+            self.now.isoformat(),
+        )
+        self.assertIn("POSITION_CAP_EXCEEDED:CAP", result["blockers"])
+
+    def test_thesis_risk_consistency_check(self):
+        candidate = self.candidate("RISK", "technology", 20)
+        candidate["thesis"] = "Low-volatility compounder"
+        candidate["risk"]["annualized_volatility"] = .60
+        plan = self.service.generate_trade_plan(
+            self.account, [], [candidate], self.now.isoformat(),
+            mandate={"maximum_annualized_volatility": .45},
+        )
+        ranked = plan["ranked_candidates"][0]
+        self.assertIn("EXCESSIVE_VOLATILITY", ranked["rejection_reasons"])
+        self.assertIn("THESIS_RISK_CONTRADICTION", ranked["rejection_reasons"])
 
     def test_expiry_staleness_and_tampering(self):
         plan = self.make_plan()
         quotes = self.validation_quotes(plan)
         path = Path(self.tmp.name) / f"{plan['plan_id']}.json"
         tampered = copy.deepcopy(plan)
-        tampered["order_intents"][0]["quantity"] = 999
+        tampered["order_intents"][0]["dollar_amount"] = 999
         path.write_text(json.dumps(tampered), encoding="utf-8")
         with self.assertRaises(RuntimeError):
             self.service.validate_trade_plan(

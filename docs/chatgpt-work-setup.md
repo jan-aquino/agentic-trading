@@ -104,11 +104,20 @@ validated intent, call Robinhood review_equity_order and show any warnings.
 Only then place the exact reviewed order, and verify it with get_equity_orders.
 Never treat order submission as a fill. Never trade a restricted symbol. For a
 next_market_open plan, wait until the market opens, fetch fresh Robinhood
-account data and quotes, and call validate_trade_plan. Never execute directly
-from closing prices. A recently expired plan may still pass validation during
-the policy's revalidation grace window when all fresh account, quote, drift,
-and compliance checks pass. If validation returns PLAN_EXPIRED as a blocker,
-price drift, or any other blocker, generate a new plan instead of overriding it.
+account data and quotes, and call validate_trade_plan with
+market_session=regular_hours. Never execute directly from closing prices. If
+validation returns PLAN_EXPIRED, price drift, or any other blocker, stop. An
+expired plan is immutable and unusable; generate a replacement only under new
+user direction and require approval of its new plan ID.
+
+Fractional and dollar-based equity purchases must be regular-hours market
+orders. Equity limits require whole-share quantities and whole-cent prices when
+above $1. A nonempty Robinhood validation alert is a failed review and must not
+advance to the second approval gate.
+
+Pass market_session to generate_trade_plan. The service rejects
+planning_mode=immediate unless market_session=regular_hours; use
+next_market_open outside the regular session.
 ```
 
 ## Rallies beta checklist

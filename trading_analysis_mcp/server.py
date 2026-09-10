@@ -19,11 +19,10 @@ service = TradingAnalysisService()
 mcp = FastMCP(
     "Trading Analysis",
     instructions=(
-    "Proposal-only research and portfolio service. It never calls a broker or executes orders. "
+        "Proposal-only research and portfolio service. It never calls a broker or executes orders. "
         "Discover candidates dynamically with a research provider such as Rallies, gather evidence "
         "and fresh Robinhood data, then submit "
-    "structured research packets. A recently expired plan may be revalidated during the policy's "
-    "grace window, but only against fresh broker data. Revalidate a plan "
+        "structured research packets. Plans are immutable and expiration is a hard blocker. Revalidate a plan "
         "immediately before asking for approval and using the separate Robinhood Trading MCP."
     ),
     stateless_http=True,
@@ -56,6 +55,7 @@ def generate_trade_plan(
     positions: List[Dict[str, Any]],
     research_candidates: List[Dict[str, Any]],
     market_data_as_of: str,
+    market_session: str,
     mandate: Dict[str, Any] | None = None,
     planning_mode: str = "immediate",
 ) -> Dict[str, Any]:
@@ -63,12 +63,13 @@ def generate_trade_plan(
 
     This only produces order intents. It cannot review or place brokerage orders.
     Research every current holding as well as new candidates. Candidate packets
-    must satisfy get_research_requirements. Use planning_mode=next_market_open
-    after hours; that mode accepts recent closing prices, filters candidates
+    must satisfy get_research_requirements. Pass the observed market_session.
+    Immediate mode is rejected outside regular_hours. Use
+    planning_mode=next_market_open after hours; that mode accepts recent closing prices, filters candidates
     above the volatility ceiling, and still requires fresh validation at open.
     """
     return service.generate_trade_plan(
-        account, positions, research_candidates, market_data_as_of, mandate, planning_mode
+        account, positions, research_candidates, market_data_as_of, mandate, planning_mode, market_session
     )
 
 
@@ -85,16 +86,16 @@ def validate_trade_plan(
     positions: List[Dict[str, Any]],
     quotes: List[Dict[str, Any]],
     market_data_as_of: str,
+    market_session: str = "regular_hours",
 ) -> Dict[str, Any]:
     """Revalidate a plan against fresh Robinhood state and quotes.
 
     A successful result authorizes only the next review step; it is not user
-    approval and does not call Robinhood. A recently expired plan can pass only
-    during the policy grace window and will return a warning. If any blocker is
-    returned, do not trade.
+    approval and does not call Robinhood. Fractional and dollar-based orders
+    require market_session=regular_hours. If any blocker is returned, do not trade.
     """
     return service.validate_trade_plan(
-        plan_id, account, positions, quotes, market_data_as_of
+        plan_id, account, positions, quotes, market_data_as_of, market_session
     )
 
 

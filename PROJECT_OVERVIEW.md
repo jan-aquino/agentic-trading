@@ -23,6 +23,10 @@ before the separate Robinhood MCP performs any brokerage action.
 - **Human-in-the-loop execution:** proposed orders require review and explicit
   approval; a broker response is not treated as a fill until order status is
   verified.
+- **Broker-compatible proposals:** fractional and dollar purchases are regular-
+  hours market orders, while limit orders use whole shares and valid tick sizes.
+- **Immutable execution contract:** exact plan IDs, hard expiration, UUID
+  idempotency keys, and review/placement parity prevent silent order mutation.
 - **Testable workflow:** unit tests cover compliance, allocation, backtesting,
   notification formatting, and fail-closed live-broker behavior.
 

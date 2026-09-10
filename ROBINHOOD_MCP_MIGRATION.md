@@ -25,9 +25,25 @@ authoritative buying power.
    the official MCP.
 3. Preserve the project's restricted-ticker and human-approval gates.
 4. Call `review_equity_order` using the agent-accessible account.
-5. After explicit approval, call `place_equity_order`.
-6. Confirm the final broker state with `get_equity_orders`; never treat an
+5. Treat any nonempty preview validation alert as a failed review. Show all
+   broker disclosures and obtain the second explicit approval for the exact
+   reviewed intents.
+6. After explicit approval, call `place_equity_order` with the UUID idempotency
+   key persisted in each intent. Reuse that key only to retry the same logical
+   order.
+7. Confirm the final broker state with `get_equity_orders`; never treat an
    order-submission response or estimated price as a fill.
+
+## Equity-order compatibility
+
+- Dollar-amount and fractional-share orders must be market orders submitted
+  during regular market hours.
+- Limit orders must use whole-share quantities. Prices above $1 use whole-cent
+  increments; the raw reference quote remains separately recorded.
+- Never silently convert an approved amount type, order type, quantity, price,
+  or market-hours instruction. If review rejects an immutable intent, stop.
+- An expired Trading Analysis plan is a hard blocker. It cannot be revived or
+  extended; generate a replacement only under new user direction.
 
 ## Deprecated paths
 

@@ -21,11 +21,12 @@ from typing import Any, Callable, Dict, List, Optional
 
 from agent.compliance import ComplianceEngine
 from agent.research_portfolio_pipeline import ResearchPortfolioPipeline
+from agent.robinhood_order_contract import OrderContractError, validate_equity_order
 from config import DEFAULT_CONFIG, SystemConfig
 
 
 SCHEMA_VERSION = "1.0"
-POLICY_VERSION = "research-portfolio-v4"
+POLICY_VERSION = "research-portfolio-v5"
 PLAN_ID_RE = re.compile(r"^plan_[0-9a-f]{32}$")
 
 
@@ -116,7 +117,6 @@ class TradingAnalysisService:
         plan_ttl_seconds: int = 21_600,
         max_snapshot_age_seconds: int = 900,
         max_price_drift_bps: float = 50.0,
-        expired_plan_revalidation_grace_seconds: int = 86_400,
         next_open_max_snapshot_age_seconds: int = 345_600,
         next_open_plan_ttl_seconds: int = 345_600,
         next_open_max_annualized_volatility: float = 0.45,
@@ -132,7 +132,6 @@ class TradingAnalysisService:
         self.plan_ttl_seconds = plan_ttl_seconds
         self.max_snapshot_age_seconds = max_snapshot_age_seconds
         self.max_price_drift_bps = max_price_drift_bps
-        self.expired_plan_revalidation_grace_seconds = expired_plan_revalidation_grace_seconds
         self.next_open_max_snapshot_age_seconds = next_open_max_snapshot_age_seconds
         self.next_open_plan_ttl_seconds = next_open_plan_ttl_seconds
         self.next_open_max_annualized_volatility = next_open_max_annualized_volatility
@@ -145,6 +144,10 @@ class TradingAnalysisService:
             "can_execute_orders": False,
             "restricted_tickers": sorted(self.compliance.restricted_tickers),
             "max_position_weight": self.config.compliance.max_position_weight,
+            "position_policy": (
+                "max_position_weight is the hard ceiling. A mandate may set a stricter "
+                "maximum_position_weight; the documented workflow uses 0.20."
+            ),
             "minimum_cash_buffer": self.config.compliance.min_cash_buffer,
             "default_target_cash_weight": 0.10,
             "legacy_advisory_target_cash_buffer": self.config.compliance.target_cash_buffer,
@@ -153,7 +156,6 @@ class TradingAnalysisService:
                 "default. legacy_advisory_target_cash_buffer is not enforced and may be overridden."
             ),
             "plan_ttl_seconds": self.plan_ttl_seconds,
-            "expired_plan_revalidation_grace_seconds": self.expired_plan_revalidation_grace_seconds,
             "maximum_quote_age_seconds": self.max_snapshot_age_seconds,
             "planning_modes": {
                 "immediate": {
@@ -168,6 +170,13 @@ class TradingAnalysisService:
                 },
             },
             "maximum_price_drift_bps": self.max_price_drift_bps,
+            "expiration_is_hard_blocker": True,
+            "equity_order_contract": {
+                "fractional_purchase": "regular-hours market order",
+                "dollar_purchase": "regular-hours market order",
+                "limit_order": "whole shares only; whole-cent price above $1",
+                "fractional_or_dollar_outside_regular_hours": "invalid",
+            },
             "candidate_universe": "dynamic; supplied by ChatGPT Work with evidence",
             "portfolio_engine": "multi_factor_research_and_mandate_driven",
             "fractional_share_sizing": True,
@@ -259,9 +268,17 @@ class TradingAnalysisService:
         market_data_as_of: str,
         mandate: Optional[Dict[str, Any]] = None,
         planning_mode: str = "immediate",
+        market_session: str = "regular_hours",
     ) -> Dict[str, Any]:
         if planning_mode not in {"immediate", "next_market_open"}:
             raise AnalysisInputError("planning_mode must be immediate or next_market_open")
+        if market_session not in {"regular_hours", "extended_hours", "closed"}:
+            raise AnalysisInputError("market_session must be regular_hours, extended_hours, or closed")
+        if planning_mode == "immediate" and market_session != "regular_hours":
+            raise AnalysisInputError(
+                "planning_mode=immediate is valid only during regular_hours; "
+                "use next_market_open outside the regular session"
+            )
         effective_mandate = dict(mandate or {})
         if planning_mode == "next_market_open":
             try:
@@ -305,7 +322,16 @@ class TradingAnalysisService:
         plan_id = f"plan_{uuid.uuid4().hex}"
         order_intents = []
         for index, intent in enumerate(constructed["order_intents"]):
-            order_intents.append({"intent_id": f"{plan_id}:{index + 1}", **intent})
+            frozen_intent = {
+                "intent_id": f"{plan_id}:{index + 1}",
+                "idempotency_key": str(uuid.uuid4()),
+                **intent,
+            }
+            try:
+                validate_equity_order(frozen_intent, require_idempotency=True)
+            except OrderContractError as exc:
+                raise AnalysisInputError(f"invalid generated order for {intent.get('symbol')}: {exc}") from exc
+            order_intents.append(frozen_intent)
 
         plan: Dict[str, Any] = {
             "schema_version": SCHEMA_VERSION,
@@ -313,6 +339,7 @@ class TradingAnalysisService:
             "plan_id": plan_id,
             "status": "PROPOSED",
             "planning_mode": planning_mode,
+            "market_session_at_creation": market_session,
             "created_at": created_at.isoformat(),
             "expires_at": expires_at.isoformat(),
             "account_snapshot": asdict(snapshot),
@@ -331,6 +358,9 @@ class TradingAnalysisService:
             "order_intents": order_intents,
             "execution_instructions": {
                 "requires_explicit_user_approval": True,
+                "approval_prompt": (
+                    f"Do you approve plan {plan_id} for pre-execution revalidation and Robinhood order review?"
+                ),
                 "required_next_step": (
                     "At market open, call validate_trade_plan with fresh Robinhood account data and quotes; "
                     "only then proceed to Robinhood review tools."
@@ -354,6 +384,7 @@ class TradingAnalysisService:
         positions: List[Dict[str, Any]],
         quotes: List[Dict[str, Any]],
         market_data_as_of: str,
+        market_session: str = "regular_hours",
     ) -> Dict[str, Any]:
         plan = self.store.load(plan_id)
         integrity = plan.get("integrity_sha256")
@@ -369,11 +400,11 @@ class TradingAnalysisService:
 
         expires_at = _parse_timestamp(plan["expires_at"], "expires_at")
         if now > expires_at:
-            seconds_past_expiry = (now - expires_at).total_seconds()
-            if seconds_past_expiry <= self.expired_plan_revalidation_grace_seconds:
-                warnings.append("PLAN_EXPIRED_WITHIN_REVALIDATION_GRACE")
-            else:
-                blockers.append("PLAN_EXPIRED")
+            blockers.append("PLAN_EXPIRED")
+        if market_session not in {"regular_hours", "extended_hours", "closed"}:
+            blockers.append("INVALID_MARKET_SESSION")
+        if plan.get("planning_mode") == "next_market_open" and market_session != "regular_hours":
+            blockers.append("MARKET_NOT_OPEN_FOR_NEXT_OPEN_PLAN")
         original = plan["account_snapshot"]
         if snapshot.account_id != original["account_id"]:
             blockers.append("ACCOUNT_CHANGED")
@@ -393,31 +424,41 @@ class TradingAnalysisService:
             if fresh_price is None:
                 blockers.append(f"MISSING_FRESH_QUOTE:{symbol}")
                 continue
-            planned_price = float(intent["limit_price"])
-            drift_bps = abs(fresh_price - planned_price) / planned_price * 10_000
+            planned_reference = float(intent.get("reference_price", intent.get("limit_price")))
+            drift_bps = abs(fresh_price - planned_reference) / planned_reference * 10_000
             if drift_bps > self.max_price_drift_bps:
                 blockers.append(f"PRICE_DRIFT:{symbol}:{drift_bps:.1f}_BPS")
 
-            quantity = float(intent["quantity"])
-            notional = quantity * fresh_price
+            try:
+                validated_order = validate_equity_order(
+                    {**intent, "market_hours": market_session}, require_idempotency=True
+                )
+            except OrderContractError as exc:
+                blockers.append(f"ORDER_CONTRACT:{symbol}:{exc}")
+                continue
+            quantity = validated_order.quantity
+            notional = (
+                float(validated_order.dollar_amount)
+                if validated_order.dollar_amount is not None
+                else float(quantity) * fresh_price
+            )
             if intent["side"] == "sell":
-                if quantity > snapshot.positions.get(symbol, 0):
+                if quantity is None or quantity > snapshot.positions.get(symbol, 0):
                     blockers.append(f"INSUFFICIENT_POSITION:{symbol}")
                 sell_notional += notional
             else:
                 buy_notional += notional
                 resulting_value = snapshot.positions.get(symbol, 0) * fresh_price + notional
-                if resulting_value / snapshot.portfolio_equity > self.config.compliance.max_position_weight:
+                plan_position_cap = min(
+                    float(plan["mandate"]["maximum_position_weight"]),
+                    self.config.compliance.max_position_weight,
+                )
+                if resulting_value / snapshot.portfolio_equity > plan_position_cap:
                     blockers.append(f"POSITION_CAP_EXCEEDED:{symbol}")
 
             broker_review_intents.append({
                 "intent_id": intent["intent_id"],
-                "symbol": symbol,
-                "side": intent["side"],
-                "quantity": intent["quantity"],
-                "amount_type": intent.get("amount_type", "whole_shares"),
-                "order_type": "limit",
-                "limit_price": planned_price,
+                **validated_order.as_dict(),
                 "fresh_reference_price": fresh_price,
             })
 
@@ -439,9 +480,17 @@ class TradingAnalysisService:
             "warnings": warnings,
             "broker_review_intents": broker_review_intents if not unique_blockers else [],
             "required_next_step": (
-                "Ask the user to approve this exact plan, then call Robinhood review_equity_order for each intent."
+                "Call Robinhood review_equity_order for every exact broker_review_intent. If every review "
+                "has no validation alert, present the reviews and require a second explicit authorization "
+                "identifying this plan ID before placement."
                 if not unique_blockers and broker_review_intents
-                else "Do not execute. Generate a new plan or resolve the blockers."
+                else "Do not execute. Resolve non-expiration blockers or, under new user direction, generate a new plan."
+            ),
+            "second_approval_prompt": (
+                f"Robinhood has reviewed the exact orders for plan {plan_id}. Do you authorize "
+                "submission of these reviewed orders?"
+                if not unique_blockers and broker_review_intents
+                else None
             ),
             "can_execute_orders": False,
         }

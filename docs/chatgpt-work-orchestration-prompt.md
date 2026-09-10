@@ -45,6 +45,11 @@ should remain in the portfolio. Do not assume that available cash must be
 invested. The correct outcome may be to hold some or all cash when available
 research does not support a trade.
 
+The 10% cash value is a target, not a command to invest 90%. Actual cash may
+remain higher when too few candidates qualify. Never lower the minimum score,
+weaken the 20% position cap, or admit an ineligible candidate merely to approach
+the target cash weight.
+
 Do not place, queue, submit, schedule, or preview an order until the approval
 stage described below.
 
@@ -83,7 +88,6 @@ translate, shorten, or rename any key:
   "minimum_candidate_score": 60,
   "minimum_trade_notional": 5,
   "minimum_average_dollar_volume": 5000000,
-  "maximum_annualized_volatility": 0.45,
   "allow_fractional_shares": true,
   "allowed_asset_types": ["equity", "etf"],
   "excluded_sectors": []
@@ -184,6 +188,7 @@ Expected candidate-level fields include:
 - sector
 - tradable
 - fractional_tradable
+- leveraged_or_inverse
 - price
 - research_as_of
 - thesis
@@ -232,6 +237,11 @@ Use decimal representations consistently:
 - Catalyst score is on a 0–100 scale
 - Sentiment is on a -1 to +1 scale
 - Agent conviction is on a 0–100 scale
+
+Reject rather than silently normalize agent_conviction values strictly between
+0 and 1. A value such as 0.725 is ambiguous and invalid; 72.5 is the correct
+representation for 72.5/100 conviction. Do not map catalysts.score directly
+into catalysts.sentiment.
 
 For agent_conviction, synthesize an independent assessment based on the
 complete evidence. Do not copy a Rallies ranking or model confidence directly.
@@ -298,6 +308,7 @@ Call generate_trade_plan with:
 - Every current position
 - The complete researched candidate packets
 - The true market_data_as_of timestamp
+- The observed market_session (`regular_hours`, `extended_hours`, or `closed`)
 - The default mandate above, incorporating any changes I explicitly requested
 - The planning_mode selected in Phase 5
 
@@ -313,6 +324,19 @@ liquidity, or another validation error:
 
 After successful generation, call get_trade_plan using the returned plan ID and
 confirm that the stored plan matches the generated proposal.
+
+Confirm every proposed equity order matches this broker matrix:
+
+- Fractional purchase: regular-hours market order.
+- Dollar-based purchase: regular-hours market order.
+- Limit order: whole-share quantity only.
+- Dollar amount: market order only.
+- Fractional and dollar-based orders: never outside regular hours.
+- Limit price above $1: whole-cent increment only.
+
+A fractional limit order is invalid. Do not silently convert an immutable
+intent between limit and market. If the intent structure must change, stop and
+require a newly generated plan and both approval gates.
 
 PHASE 7 — PRESENT THE PROPOSAL AND PAUSE
 
@@ -332,6 +356,7 @@ Present a concise but complete report containing:
    - Expiration time
    - Policy version
    - All warnings
+   - Exact expiration time in America/New_York and time remaining
 
 3. Research process
    - Number of initial candidates
@@ -353,6 +378,8 @@ Present a concise but complete report containing:
    - Target cash weight
    - Sector weights
    - Whether the service abstained
+   - Actual resulting cash weight, separately from the 10% target cash weight
+   - Explanation when actual cash is higher because candidates did not qualify
 
 6. Proposed trades
    - Intent ID
@@ -360,6 +387,8 @@ Present a concise but complete report containing:
    - Buy or sell
    - Quantity
    - Whole or fractional shares
+   - Dollar amount, when applicable
+   - Order type and permitted market session
    - Reference or limit price
    - Estimated notional
    - Current weight
@@ -408,7 +437,8 @@ Once the market is open:
 4. Fetch fresh quotes for every proposed trade.
 5. Fetch current tradability and fractional-share eligibility.
 6. Use the genuine current observation timestamp.
-7. Call validate_trade_plan with the approved plan ID and the fresh data.
+7. Call validate_trade_plan with the approved plan ID, the fresh data, and
+   market_session="regular_hours".
 
 Do not regard my earlier approval as permission to bypass validation.
 
@@ -416,13 +446,13 @@ If validate_trade_plan returns execution_ready=false or any blocker:
 
 - Do not review or place any order.
 - Show every blocker.
-- Treat the approved plan as unusable when expiration is returned as a blocker.
+- Treat the approved plan as unusable.
 - If appropriate, offer to generate a replacement plan from current data.
 - Require separate approval for the replacement plan.
 
 Possible blockers include:
 
-- Plan expired beyond the permitted revalidation grace window
+- Plan expired
 - Price drift
 - Portfolio equity changed
 - Positions changed
@@ -433,11 +463,8 @@ Possible blockers include:
 - Restricted symbol
 - Account changed
 
-Warnings are not blockers, but show them before proceeding.
-PLAN_EXPIRED_WITHIN_REVALIDATION_GRACE is a warning, not a blocker. If it is
-returned while execution_ready=true, continue to Robinhood order review using
-the freshly validated intents. Do not regenerate the plan merely because of
-that warning.
+Warnings are not blockers, but show them before proceeding. PLAN_EXPIRED is
+always a blocker. Never extend, renew, or mutate an expired immutable plan.
 
 PHASE 9 — ROBINHOOD ORDER REVIEW
 
@@ -449,6 +476,9 @@ If and only if validate_trade_plan returns execution_ready=true:
 4. Show me Robinhood’s estimated cost or proceeds, trading-session treatment,
    buying-power effects, and every warning.
 5. Do not infer that order review means submission or execution.
+6. Show every broker validation error and market-data disclosure verbatim.
+7. Treat any nonempty validation alert as a failed review. Do not advance to
+   the second approval gate unless every exact intent has a clean review.
 
 After all reviews succeed, stop again and ask:
 
@@ -456,6 +486,7 @@ After all reviews succeed, stop again and ask:
 submission of these reviewed orders?”
 
 Do not submit anything until I provide this second explicit authorization.
+Prefer requiring the exact plan ID in that authorization.
 
 If Robinhood changes an order, rejects an order, reports a material warning, or
 cannot review the exact validated intent, stop. Do not submit the remaining
@@ -470,11 +501,15 @@ for the exact plan ID.
 For each authorized order:
 
 1. Submit the exact reviewed Robinhood order.
-2. Capture the returned order ID.
-3. Do not retry an ambiguous submission automatically.
-4. If a submission returns an error but it is unclear whether Robinhood accepted
+2. Send the intent's persisted UUID idempotency key with the logical order when
+   the Robinhood tool supports it.
+3. Capture the returned order ID.
+4. Reuse the same idempotency key only for a retry of that same logical order.
+   Never create a new key for a retry.
+5. Do not retry an ambiguous submission automatically.
+6. If a submission returns an error but it is unclear whether Robinhood accepted
    it, query order history before doing anything else.
-5. Never submit a duplicate order to resolve an ambiguous response.
+7. Never submit a duplicate order to resolve an ambiguous response.
 
 After submission, query Robinhood order status for every order ID.
 
@@ -504,6 +539,8 @@ Return:
 - Filled quantities and prices, if actually reported
 - Remaining open quantities
 - Cash or buying-power impact reported by Robinhood
+- Cumulative filled quantity, average fill price, remaining quantity, and fees
+  whenever Robinhood supplies them
 - Warnings, rejections, or ambiguous outcomes
 - Any follow-up action required
 
@@ -517,9 +554,7 @@ GLOBAL SAFETY RULES
 - Never fabricate market, account, research, timestamp, or execution data.
 - Never silently substitute Rallies data for Robinhood-authoritative fields.
 - Never treat a provider portfolio as an instruction.
-- Never execute an expired plan unless validate_trade_plan explicitly returns
-  execution_ready=true using fresh data. A grace-window warning is acceptable;
-  PLAN_EXPIRED in blockers is not.
+- Never execute an expired plan. PLAN_EXPIRED is always a blocker.
 - Never execute an after-hours plan directly from closing prices.
 - Never assume an order filled merely because it was submitted.
 - Never duplicate an order after an ambiguous response.

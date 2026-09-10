@@ -25,6 +25,9 @@ Copy-ready workflow prompt: [docs/chatgpt-work-orchestration-prompt.md](docs/cha
      and risk inputs for every candidate and current holding.
    - Scores quality, growth, valuation, momentum, catalysts, and risk.
    - Constructs portfolios under mandate, position, sector, liquidity, and cash constraints.
+   - Emits Robinhood-compatible order intents: notional fractional purchases
+     use regular-hours market orders, while limits require whole shares and
+     broker-valid price increments.
    - Supports fractional sizing and can abstain when no candidate qualifies.
 
 2. **🛡️ 100% Snowflake (`SNOW`) Exclusion Policy**:
