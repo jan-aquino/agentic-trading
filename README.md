@@ -1,4 +1,17 @@
-# 🚀 Agentic Research and Portfolio Trading System
+# Simple Value Trading System (V2)
+
+The default MCP is now a deliberately small, proposal-only workflow for a small
+portfolio: web research finds profitable companies with positive EPS and P/E
+at or below 25, the service shortlists at most five, and it proposes at most one
+new purchase while preserving 10% cash. A holding monitor considers EPS
+deterioration, valuation expansion, earnings results, guidance, analyst targets,
+and material news before raising a sell review.
+
+See [the V2 workflow and ChatGPT Work prompt](docs/SIMPLE_WORKFLOW.md). The
+original multi-factor system is preserved as [V1](archive/v1/README.md) at Git
+tag `v1`; its source, tests, and backtester remain available in this repository.
+
+## V1 background
 
 A proposal-first system in which ChatGPT Work dynamically discovers and
 researches investments, while a Trading Analysis MCP validates evidence,
