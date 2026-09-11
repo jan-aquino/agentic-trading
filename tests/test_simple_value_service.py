@@ -36,6 +36,11 @@ class TestSimpleValueService(unittest.TestCase):
         ])
         self.assertEqual([item["symbol"] for item in result["shortlist"]], ["GOOD"])
 
+    def test_turnaround_growth_above_one_thousand_percent_is_preserved(self):
+        candidate = self.candidate("TURN", eps=44.17, pe=22.13, growth=13.6845)
+        result = self.service.shortlist([candidate])
+        self.assertEqual(result["shortlist"][0]["eps_growth_yoy"], 13.6845)
+
     def test_purchase_uses_cash_buffer_and_one_position(self):
         plan = self.service.propose_purchase(
             {"account_id": "acct", "portfolio_equity": 500, "cash_balance": 500, "buying_power": 500},

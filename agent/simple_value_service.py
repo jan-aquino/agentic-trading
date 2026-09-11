@@ -140,7 +140,10 @@ class SimpleValueService:
             price = _number(raw.get("price"), f"{symbol}.price", minimum=.01)
             eps = _number(raw.get("eps_ttm"), f"{symbol}.eps_ttm")
             pe = _number(raw.get("pe_ttm"), f"{symbol}.pe_ttm")
-            growth = _bounded(raw.get("eps_growth_yoy"), f"{symbol}.eps_growth_yoy", -5, 10)
+            # Turnarounds can legitimately produce growth above 1,000% from a
+            # small prior-year base. Scoring already saturates at 40%, so keep
+            # the reported value for audit rather than clipping or rejecting it.
+            growth = _bounded(raw.get("eps_growth_yoy"), f"{symbol}.eps_growth_yoy", -5, 100)
             target = _number(raw.get("analyst_target_mean"), f"{symbol}.analyst_target_mean", minimum=0)
             sentiment = _bounded(raw.get("news_sentiment"), f"{symbol}.news_sentiment", -1, 1)
             researched_at = _parse_time(raw.get("research_as_of"), f"{symbol}.research_as_of")
