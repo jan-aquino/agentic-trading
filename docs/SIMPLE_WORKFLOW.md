@@ -60,37 +60,9 @@ from Robinhood/account history or a locally maintained position ledger.
 
 ## ChatGPT Work orchestration prompt
 
-```text
-Run the Simple Value Trading V2 workflow. First call get_simple_policy and
-get_simple_research_requirements.
+Use the [canonical live-trading prompt](chatgpt-work-orchestration-prompt.md).
+It is the single maintained prompt for research, approvals, execution, and monitoring.
 
-For discovery, web-search a broad set of liquid US companies for positive and
-relatively high trailing EPS with a trailing P/E no greater than 25. Do not use
-a fixed portfolio. Verify reported EPS and earnings claims using an SEC filing
-or issuer earnings release. Use a distinct market-data source for current price
-and P/E, and reputable published sources for analyst consensus, mean analyst
-target, earnings date, guidance, and material news. Preserve each source's
-title, publisher, URL, and observation time. Clearly label analyst forecasts as
-opinions. Never fabricate unavailable fields.
-
-Submit normalized candidates to shortlist_value_stocks. Then read the current
-Robinhood account, cash, buying power, positions, tradability, fractional
-eligibility, and prices. Robinhood is authoritative for those fields. Submit
-the account, positions, and candidates to propose_purchase. The result may be
-no trade. Present the exact proposal, sources, risks, plan ID, and cash
-remaining, and ask for approval. Do not call a Robinhood order tool yet.
-
-If I approve, refresh the Robinhood account and quote and call
-validate_simple_purchase. Stop on any blocker. If ready, call Robinhood's order
-review tool and show me the exact reviewed order and warnings. Place it only
-after I explicitly approve that reviewed order. Never use margin, leverage,
-options, shorts, inverse or leveraged ETFs, and never purchase SNOW.
-
-For ongoing monitoring, research every current holding and call
-evaluate_holdings. Include current and prior trailing EPS, P/E, sector median
-P/E, entry price, highest price observed since purchase, latest earnings
-surprise, guidance direction, next earnings date, analyst
-target and consensus, news sentiment, material negative news, timestamp, and
-sources. Report HOLD, WATCH, or SELL_REVIEW with triggering evidence. Never
-sell automatically; ask me to approve an exact sell proposal first.
-```
+Implementation detail: the 20% reassessment signal currently counts toward
+the ordinary two-signal sell-review threshold. A gain plus one other ordinary
+signal can therefore produce SELL_REVIEW below a 30% gain.
