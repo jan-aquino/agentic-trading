@@ -438,6 +438,7 @@ class ResearchPortfolioPipeline:
         portfolio_equity: float,
         available_cash: float,
         now: datetime,
+        position_sizing_multiplier: float = 1.0,
     ) -> Dict[str, Any]:
         screened = self.screen_candidates(candidates, mandate_raw, now)
         mandate: InvestmentMandate = screened["mandate"]
@@ -452,6 +453,9 @@ class ResearchPortfolioPipeline:
         eligible = [item for item in ranked if item["eligible"]][:mandate.maximum_positions]
         target_weights: Dict[str, float] = {}
         sector_weights: Dict[str, float] = {}
+        if not 0 < position_sizing_multiplier <= 1:
+            raise ResearchInputError("position_sizing_multiplier must be greater than 0 and at most 1")
+        construction_position_cap = mandate.maximum_position_weight * position_sizing_multiplier
         remaining = 1.0 - mandate.target_cash_weight
         remaining_score = sum(item["adjusted_score"] for item in eligible)
         pending = list(eligible)
@@ -460,7 +464,7 @@ class ResearchPortfolioPipeline:
             for item in list(pending):
                 proportional = remaining * item["adjusted_score"] / remaining_score
                 sector_room = mandate.maximum_sector_weight - sector_weights.get(item["sector"], 0.0)
-                weight = max(0.0, min(proportional, mandate.maximum_position_weight, sector_room))
+                weight = max(0.0, min(proportional, construction_position_cap, sector_room))
                 if weight > 0:
                     target_weights[item["symbol"]] = weight
                     sector_weights[item["sector"]] = sector_weights.get(item["sector"], 0.0) + weight
@@ -471,9 +475,11 @@ class ResearchPortfolioPipeline:
             if not progress:
                 break
         target_weights["CASH"] = mandate.target_cash_weight + max(0.0, remaining)
+        target_weights = self.adjust_target_weights(
+            target_weights, ranked, positions, portfolio_equity, mandate, now
+        )
 
         intents: List[Dict[str, Any]] = []
-        selected_by_symbol = {item["symbol"]: item for item in eligible}
         scored_by_symbol = {item["symbol"]: item for item in ranked}
         all_symbols = set(scored_by_symbol).union(positions)
         for symbol in sorted(all_symbols):
@@ -570,10 +576,22 @@ class ResearchPortfolioPipeline:
         return {
             "mandate": mandate,
             "ranked_candidates": ranked,
-            "selected_symbols": list(selected_by_symbol),
+            "selected_symbols": [symbol for symbol in target_weights if symbol != "CASH"],
             "target_weights": {key: round(value, 6) for key, value in target_weights.items()},
             "sector_weights": {key: round(value, 6) for key, value in sector_weights.items()},
+            "construction_position_cap": round(construction_position_cap, 6),
             "order_intents": intents,
             "abstained": not intents,
             "abstention_reason": "NO_TRADE_CLEARED_RESEARCH_AND_SIZING_THRESHOLDS" if not intents else None,
         }
+    def adjust_target_weights(
+        self,
+        target_weights: Dict[str, float],
+        ranked: List[Dict[str, Any]],
+        positions: Mapping[str, float],
+        portfolio_equity: float,
+        mandate: InvestmentMandate,
+        now: datetime,
+    ) -> Dict[str, float]:
+        """Strategy hook; the production pipeline uses the scored allocation unchanged."""
+        return target_weights

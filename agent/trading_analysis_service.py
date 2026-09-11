@@ -318,6 +318,7 @@ class TradingAnalysisService:
             portfolio_equity=snapshot.portfolio_equity,
             available_cash=min(snapshot.cash_balance, snapshot.buying_power),
             now=self.clock().astimezone(timezone.utc),
+            position_sizing_multiplier=(0.95 if planning_mode == "next_market_open" else 1.0),
         )
 
         created_at = self.clock().astimezone(timezone.utc)
@@ -352,6 +353,7 @@ class TradingAnalysisService:
             "selected_symbols": constructed["selected_symbols"],
             "target_weights": constructed["target_weights"],
             "sector_weights": constructed["sector_weights"],
+            "construction_position_cap": constructed["construction_position_cap"],
             "abstained": constructed["abstained"],
             "abstention_reason": constructed["abstention_reason"],
             "warnings": (

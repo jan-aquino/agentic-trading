@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.resolve()))
 
 from agent.proposal_backtester import ProposalPipelineBacktester
 from agent.market_analyzer import MarketAnalyzer
+from agent.historical_fundamentals import SecEdgarFundamentalsProvider
 
 
 def main():
@@ -18,6 +19,14 @@ def main():
     parser.add_argument("--end-date", required=True)
     parser.add_argument("--capital", type=float, default=1000.0)
     parser.add_argument("--rebalance-days", type=int, default=21)
+    parser.add_argument(
+        "--fundamentals", choices=("sec", "none"), default="sec",
+        help="Point-in-time fundamental source (default: SEC EDGAR)",
+    )
+    parser.add_argument("--active-only", action="store_true", help="Disable the 50% diversified ETF core")
+    parser.add_argument("--minimum-holding-days", type=int, default=42)
+    parser.add_argument("--maximum-turnover", type=float, default=.25,
+                        help="Maximum one-way portfolio turnover per rebalance")
     parser.add_argument(
         "--allow-synthetic", action="store_true",
         help="Permit deterministic synthetic fallback (off by default)",
@@ -31,7 +40,14 @@ def main():
         allow_synthetic_data=args.allow_synthetic,
         allow_cached_data=args.use_cache,
     )
-    result = ProposalPipelineBacktester(analyzer=analyzer).run(
+    provider = SecEdgarFundamentalsProvider() if args.fundamentals == "sec" else None
+    result = ProposalPipelineBacktester(
+        analyzer=analyzer,
+        fundamentals_provider=provider,
+        core_satellite=not args.active_only,
+        minimum_holding_days=args.minimum_holding_days,
+        maximum_one_way_turnover=args.maximum_turnover,
+    ).run(
         args.start_date, args.end_date, args.capital, args.rebalance_days
     )
     metrics = result.metrics
@@ -54,8 +70,14 @@ def main():
     if blockers:
         print("Validation blockers: " + ", ".join(f"{name}={count}" for name, count in blockers.most_common()))
     print("Data sources: " + ", ".join(sorted(set(result.data_sources.values()))))
-    print("Method: point-in-time market discovery → actual immutable plan generation → next-open validation → simulated fills")
-    print("Limitation: fundamentals and catalysts are unavailable and excluded from proxy scoring.\n")
+    print("Method: filing-date-filtered research + market discovery → immutable plan → next-open validation → fills")
+    print(f"Portfolio: {'active-only' if args.active_only else '48% ETF core / 42% active / 10% cash'}; "
+          f"minimum hold {args.minimum_holding_days}d; max one-way turnover {args.maximum_turnover:.0%}")
+    if args.fundamentals == "none":
+        print("Limitation: fundamentals and catalysts are unavailable and excluded from proxy scoring.")
+    else:
+        print("Fundamentals: SEC Company Facts known by filing date; filing recency is a catalyst proxy.")
+    print()
 
 
 if __name__ == "__main__":

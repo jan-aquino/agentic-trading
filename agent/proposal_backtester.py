@@ -12,6 +12,7 @@ import pandas as pd
 
 from agent.backtester import BacktestMetrics, Backtester
 from agent.historical_research_proxy import HistoricalDiscoveryAgent, HistoricalMarketProxyPipeline
+from agent.historical_fundamentals import HistoricalResearchProvider
 from agent.market_analyzer import MarketAnalyzer
 from agent.trading_analysis_service import FilePlanStore, TradingAnalysisService
 from config import DEFAULT_CONFIG, SystemConfig
@@ -36,11 +37,22 @@ class ProposalPipelineBacktester:
         config: Optional[SystemConfig] = None,
         analyzer: Optional[MarketAnalyzer] = None,
         slippage_bps: float = 5.0,
+        fundamentals_provider: Optional[HistoricalResearchProvider] = None,
+        core_satellite: bool = True,
+        minimum_holding_days: int = 42,
+        maximum_one_way_turnover: float = .25,
     ):
         self.config = config or DEFAULT_CONFIG
         self.analyzer = analyzer or MarketAnalyzer(config=self.config.strategy)
         self.slippage_bps = slippage_bps
-        self.discovery = HistoricalDiscoveryAgent()
+        self.fundamentals_provider = fundamentals_provider
+        self.core_targets = {"SPY": .19, "QQQ": .19, "IWM": .10} if core_satellite else {}
+        self.discovery = HistoricalDiscoveryAgent(
+            fundamentals_provider=fundamentals_provider,
+            always_include=set(self.core_targets),
+        )
+        self.minimum_holding_days = minimum_holding_days
+        self.maximum_one_way_turnover = maximum_one_way_turnover
 
     def run(
         self,
@@ -55,7 +67,7 @@ class ProposalPipelineBacktester:
         universe = sorted(set(
             self.config.strategy.ai_infra_universe
             + self.config.strategy.core_diversified_universe
-            + ["SPY", "QQQ", "SNOW"]
+            + ["SPY", "QQQ", "IWM", "SNOW"]
         ))
         price_data = {
             symbol: self.analyzer.fetch_ohlcv(symbol, warmup_start, end_date)
@@ -69,13 +81,18 @@ class ProposalPipelineBacktester:
         cash = float(initial_capital)
         holdings: Dict[str, float] = {}
         average_costs: Dict[str, float] = {}
+        acquired_dates: Dict[str, pd.Timestamp] = {}
         plan_log: list[Dict[str, Any]] = []
         trades: list[Dict[str, Any]] = []
         equity_records = []
         mutable_clock = [datetime.combine(dates[0].date(), time(21), tzinfo=timezone.utc)]
 
         with tempfile.TemporaryDirectory() as plan_dir:
-            pipeline = HistoricalMarketProxyPipeline(config=self.config)
+            pipeline = HistoricalMarketProxyPipeline(
+                config=self.config, core_targets=self.core_targets,
+                minimum_holding_days=self.minimum_holding_days,
+                maximum_one_way_turnover=self.maximum_one_way_turnover,
+            )
             service = TradingAnalysisService(
                 config=self.config,
                 store=FilePlanStore(Path(plan_dir)),
@@ -119,7 +136,10 @@ class ProposalPipelineBacktester:
                     entry = next(item for item in plan_log if item["plan_id"] == pending["plan_id"])
                     entry["validation"] = validation
                     if validation["execution_ready"]:
-                        self._execute(validation["broker_review_intents"], open_prices, current_date, holdings, average_costs, trades, cash_box := [cash])
+                        self._execute(
+                            validation["broker_review_intents"], open_prices, current_date,
+                            holdings, average_costs, acquired_dates, trades, cash_box := [cash]
+                        )
                         cash = cash_box[0]
                         entry["status"] = "SIMULATED_FILLED"
                     else:
@@ -142,6 +162,10 @@ class ProposalPipelineBacktester:
                         {"symbol": symbol, "quantity": quantity, "current_price": close_prices[symbol]}
                         for symbol, quantity in holdings.items()
                     ]
+                    pipeline.set_portfolio_context({
+                        symbol: max(0, (current_date - acquired_dates.get(symbol, current_date)).days)
+                        for symbol in holdings
+                    })
                     plan = service.generate_trade_plan(
                         {"account_id": "historical-simulation", "portfolio_equity": total_equity,
                          "cash_balance": cash, "buying_power": cash},
@@ -187,7 +211,10 @@ class ProposalPipelineBacktester:
             self._price_on(price_data["SPY"], dates[0], "Close"), self._price_on(price_data["SPY"], dates[-1], "Close"),
             self._price_on(price_data["QQQ"], dates[0], "Close"), self._price_on(price_data["QQQ"], dates[-1], "Close"),
         )
-        return ProposalBacktestResult(metrics, equity, plan_log, trades, holdings, cash, dict(self.analyzer.data_sources))
+        sources = dict(self.analyzer.data_sources)
+        if self.fundamentals_provider:
+            sources["fundamentals"] = "SEC EDGAR Company Facts (filing-date filtered)"
+        return ProposalBacktestResult(metrics, equity, plan_log, trades, holdings, cash, sources)
 
     @staticmethod
     def _price_on(frame: pd.DataFrame, date: pd.Timestamp, column: str) -> float:
@@ -200,7 +227,7 @@ class ProposalPipelineBacktester:
         history = frame.loc[:date, column]
         return float(history.iloc[-1]) if not history.empty else None
 
-    def _execute(self, intents, open_prices, current_date, holdings, average_costs, trades, cash_box):
+    def _execute(self, intents, open_prices, current_date, holdings, average_costs, acquired_dates, trades, cash_box):
         for intent in sorted(intents, key=lambda item: item["side"] != "sell"):
             symbol = intent["symbol"]
             market_price = open_prices[symbol]
@@ -215,6 +242,7 @@ class ProposalPipelineBacktester:
                 if holdings[symbol] < 1e-8:
                     holdings.pop(symbol, None)
                     average_costs.pop(symbol, None)
+                    acquired_dates.pop(symbol, None)
                 trades.append({"date": current_date.strftime("%Y-%m-%d"), "ticker": symbol,
                                "action": "SELL", "shares": quantity, "price": fill,
                                "fee": fee, "slippage_cost": quantity * (market_price - fill),
@@ -224,6 +252,8 @@ class ProposalPipelineBacktester:
                 fill = market_price * (1 + self.slippage_bps / 10_000)
                 quantity = dollars / fill
                 old_quantity = holdings.get(symbol, 0.0)
+                if old_quantity <= 0:
+                    acquired_dates[symbol] = current_date
                 average_costs[symbol] = (average_costs.get(symbol, 0.0) * old_quantity + dollars) / (old_quantity + quantity)
                 holdings[symbol] = old_quantity + quantity
                 cash_box[0] -= dollars

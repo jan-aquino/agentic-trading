@@ -84,6 +84,7 @@ class TestTradingAnalysisService(unittest.TestCase):
             planning_mode="next_market_open", market_session="closed",
         )
         self.assertEqual(plan["planning_mode"], "next_market_open")
+        self.assertEqual(plan["construction_position_cap"], .19)
         self.assertIn("AFTER_HOURS_REFERENCE_PRICES", plan["warnings"])
         self.assertGreater(
             datetime.fromisoformat(plan["expires_at"]) - datetime.fromisoformat(plan["created_at"]),

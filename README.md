@@ -106,13 +106,30 @@ python3 scripts/run_backtest.py --start-date 2026-01-01 --end-date 2026-09-10 --
 ```
 
 To exercise the actual immutable plan generator and next-open validator, use
-the isolated historical market proxy. This performs walk-forward discovery but
-excludes unavailable historical fundamentals and catalysts from proxy scoring;
-the live MCP contract remains strict.
+the point-in-time research runner. By default it combines Yahoo historical
+prices with SEC Company Facts filtered by public filing date, then builds a
+48% diversified ETF core (SPY 19%, QQQ 19%, IWM 10%), a 42% scored stock
+sleeve, and 10% cash. The 19% large-ETF targets preserve room beneath the hard
+20% cap for next-open movement.
+It also enforces a 42-day minimum holding period and caps one-way turnover at
+25% per rebalance. The live MCP research contract remains strict and separate.
 
 ```bash
 python3 scripts/run_proposal_backtest.py --start-date 2026-01-01 --end-date 2026-09-10 --capital 1000
 ```
+
+Set a descriptive SEC user agent before the first run (SEC asks automated
+clients to identify themselves):
+
+```bash
+export SEC_USER_AGENT="AgenticTrading your-email@example.com"
+```
+
+Use `--fundamentals none --active-only` only to reproduce the older technical
+proxy. SEC responses are cached under `data/cache/sec_companyfacts`; every fact
+is filtered to `filed <= simulated decision date`, preventing future filings
+from leaking into the test. Strategy parameters should be fixed before looking
+at a holdout period; report the holdout separately from any development period.
 
 This runner disables cached and synthetic data by default and fails if
 authoritative history is unavailable. Use `--use-cache` or `--allow-synthetic`
