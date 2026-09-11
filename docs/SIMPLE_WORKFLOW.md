@@ -44,6 +44,20 @@ or 1.5 times the sector median, a 10% earnings miss, lowered/withdrawn guidance,
 an analyst target 10% below price, or strongly negative sourced news. One
 ordinary signal produces `WATCH`; no signal produces `HOLD`.
 
+Profit protection is deliberately conditional:
+
+- A current gain of at least 20% produces `WATCH` and a thesis/valuation review,
+  not an automatic sale.
+- Once the position has reached a 20% gain, a decline of at least 12% from its
+  highest observed price produces `SELL_REVIEW`.
+- A current gain of at least 30% combined with either a 10% EPS decline or
+  valuation expansion produces `SELL_REVIEW`.
+- A winner can continue compounding when EPS, valuation, guidance, and price
+  behavior remain supportive.
+
+The monitor therefore requires `entry_price` and `peak_price_since_purchase`
+from Robinhood/account history or a locally maintained position ledger.
+
 ## ChatGPT Work orchestration prompt
 
 ```text
@@ -74,7 +88,8 @@ options, shorts, inverse or leveraged ETFs, and never purchase SNOW.
 
 For ongoing monitoring, research every current holding and call
 evaluate_holdings. Include current and prior trailing EPS, P/E, sector median
-P/E, latest earnings surprise, guidance direction, next earnings date, analyst
+P/E, entry price, highest price observed since purchase, latest earnings
+surprise, guidance direction, next earnings date, analyst
 target and consensus, news sentiment, material negative news, timestamp, and
 sources. Report HOLD, WATCH, or SELL_REVIEW with triggering evidence. Never
 sell automatically; ask me to approve an exact sell proposal first.

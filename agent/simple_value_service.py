@@ -90,6 +90,16 @@ class SimpleValueService:
                 "no_margin_or_leverage": True,
             },
             "sell_policy": "Propose, never automatically execute. Two ordinary sell signals or one severe signal are required.",
+            "profit_protection": {
+                "reassess_at_return": .20,
+                "high_gain_threshold": .30,
+                "trailing_drawdown_after_target": -.12,
+                "rule": (
+                    "A 20% gain triggers WATCH/reassessment, not an automatic sale. "
+                    "SELL_REVIEW requires a 12% retreat from the post-purchase peak after "
+                    "the target was reached, or a 30% gain combined with EPS or valuation deterioration."
+                ),
+            },
             "restricted_tickers": sorted(self.config.compliance.restricted_tickers),
             "execution_owner": "ChatGPT Work using the separately authenticated Robinhood Trading MCP",
         }
@@ -104,6 +114,7 @@ class SimpleValueService:
             ],
             "holding_monitor_fields": [
                 "symbol", "price", "eps_ttm", "prior_eps_ttm", "pe_ttm",
+                "entry_price", "peak_price_since_purchase",
                 "sector_median_pe", "last_earnings_surprise_pct", "guidance_direction",
                 "next_earnings_date", "analyst_target_mean", "analyst_consensus",
                 "news_sentiment", "material_negative_news", "research_as_of", "evidence",
@@ -218,6 +229,15 @@ class SimpleValueService:
             surprise = _bounded(raw.get("last_earnings_surprise_pct"), f"{symbol}.last_earnings_surprise_pct", -5, 5)
             target = _number(raw.get("analyst_target_mean"), f"{symbol}.analyst_target_mean", minimum=0)
             price = _number(raw.get("price"), f"{symbol}.price", minimum=.01)
+            entry_price = _number(raw.get("entry_price"), f"{symbol}.entry_price", minimum=.01)
+            peak_price = _number(
+                raw.get("peak_price_since_purchase"),
+                f"{symbol}.peak_price_since_purchase", minimum=.01,
+            )
+            if peak_price < price:
+                raise SimpleValueInputError(
+                    f"{symbol}.peak_price_since_purchase cannot be below current price"
+                )
             sentiment = _bounded(raw.get("news_sentiment"), f"{symbol}.news_sentiment", -1, 1)
             evidence = list(raw.get("evidence") or [])
             if len(evidence) < 2:
@@ -237,11 +257,29 @@ class SimpleValueService:
             if analyst_downside <= -.10: signals.append("ANALYST_TARGET_BELOW_PRICE")
             if sentiment <= -.60: signals.append("STRONGLY_NEGATIVE_NEWS")
             if raw.get("material_negative_news"): severe.append("MATERIAL_NEGATIVE_EVENT")
+            total_return = price / entry_price - 1.0
+            peak_return = peak_price / entry_price - 1.0
+            drawdown_from_peak = price / peak_price - 1.0
+            reached_profit_target = peak_return >= .20 - 1e-9
+            if total_return >= .20 - 1e-9:
+                signals.append("PROFIT_TARGET_REACHED_REASSESS")
+            if reached_profit_target and drawdown_from_peak <= -.12:
+                severe.append("PROFIT_PROTECTION_TRAILING_DRAWDOWN")
+            deteriorating = (
+                "EPS_DECLINED_AT_LEAST_10_PERCENT" in signals
+                or "VALUATION_EXPANDED" in signals
+            )
+            if total_return >= .30 - 1e-9 and deteriorating:
+                severe.append("HIGH_GAIN_WITH_EPS_OR_VALUATION_DETERIORATION")
             action = "SELL_REVIEW" if severe or len(signals) >= 2 else "WATCH" if signals else "HOLD"
             decisions.append({
                 "symbol": symbol, "action": action, "severe_signals": severe,
                 "signals": signals, "eps_change": round(eps_change, 4),
                 "analyst_implied_upside": round(analyst_downside, 4),
+                "total_return": round(total_return, 4),
+                "peak_return": round(peak_return, 4),
+                "drawdown_from_peak": round(drawdown_from_peak, 4),
+                "profit_target_reached": reached_profit_target,
                 "next_earnings_date": raw.get("next_earnings_date"),
                 "evidence": evidence,
                 "note": "Analyst targets and news are supporting signals, never sole authority.",
