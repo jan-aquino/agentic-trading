@@ -28,6 +28,10 @@ supporting evidence, never facts or sole buy/sell triggers.
 - Shortlist at most five stocks and propose at most one new holding per run.
 - Do not add a symbol already held.
 - Preserve 10% cash and cap a new position at 20% of portfolio equity.
+- Buy amounts are rounded down to cents using decimal arithmetic. Pass optional
+  `maximum_purchase_amount` to save a smaller proposal (for example, 98.64).
+  It cannot override the cap or cash reserve. Revalidation checks the cap against
+  refreshed equity; an existing saved proposal is never silently resized.
 - Require at least two sources, including a primary SEC filing or issuer
   earnings release for reported earnings claims.
 - Plans expire after 24 hours and are blocked if price moves more than 5% before

@@ -62,6 +62,27 @@ class TestSimpleValueService(unittest.TestCase):
         self.assertFalse(result["execution_ready"])
         self.assertIn("PRICE_DRIFT_OVER_5_PERCENT", result["blockers"])
 
+    def test_purchase_floors_cap_and_accepts_lower_requested_amount(self):
+        account = dict(account_id='acct', portfolio_equity=493.249,
+                       cash_balance=493.249, buying_power=493.249)
+        plan = self.service.propose_purchase(account, [], [self.candidate()])
+        self.assertEqual(plan['order_intents'][0]['dollar_amount'], 98.64)
+        account['portfolio_equity'] = 493.50
+        plan = self.service.propose_purchase(account, [], [self.candidate()], 98.64)
+        self.assertEqual(plan['order_intents'][0]['dollar_amount'], 98.64)
+        plan = self.service.propose_purchase(account, [], [self.candidate()], 200)
+        self.assertEqual(plan['order_intents'][0]['dollar_amount'], 98.70)
+        account['portfolio_equity'] = 493.20
+        result = self.service.validate_purchase(plan['plan_id'], account,
+                                                dict(symbol='ACME', price=100))
+        self.assertIn('POSITION_CAP_EXCEEDED', result['blockers'])
+
+    def test_purchase_floors_cash_headroom(self):
+        account = dict(account_id='acct', portfolio_equity=500,
+                       cash_balance=55.009, buying_power=55.009)
+        plan = self.service.propose_purchase(account, [], [self.candidate()])
+        self.assertEqual(plan['order_intents'][0]['dollar_amount'], 5.00)
+
     def test_sell_review_requires_two_normal_or_one_severe_signal(self):
         base = {
             "symbol": "ACME", "price": 100, "eps_ttm": 4, "prior_eps_ttm": 5,

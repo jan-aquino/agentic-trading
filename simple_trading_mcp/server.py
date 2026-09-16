@@ -48,10 +48,11 @@ def shortlist_value_stocks(candidates: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 @mcp.tool(annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": False})
 def propose_purchase(
-    account: Dict[str, Any], positions: List[Dict[str, Any]], candidates: List[Dict[str, Any]]
+    account: Dict[str, Any], positions: List[Dict[str, Any]], candidates: List[Dict[str, Any]],
+    maximum_purchase_amount: float | None = None,
 ) -> Dict[str, Any]:
     """Create at most one buy proposal after accounting for holdings and spendable cash."""
-    return service.propose_purchase(account, positions, candidates)
+    return service.propose_purchase(account, positions, candidates, maximum_purchase_amount)
 
 
 @mcp.tool(annotations={"readOnlyHint": True, "destructiveHint": False, "idempotentHint": True})

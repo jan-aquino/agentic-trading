@@ -63,6 +63,10 @@ Pass propose_purchase:
 account={account_id, portfolio_equity, cash_balance, buying_power},
 positions=[{symbol, quantity}, ...],
 candidates=[the complete researched candidate packets].
+Optionally pass maximum_purchase_amount=98.64 (or another desired ceiling) to
+save a smaller purchase. The service rounds down to cents and applies the cap
+and cash reserve. If refreshed equity invalidates an existing proposal, reuse
+valid research to create a smaller replacement and obtain approval for it.
 Use actual broker data and exclude margin borrowing from spendable cash.
 The policy allows at most one new holding per run, a 20% position cap,
 10% cash reserve, and $5 minimum purchase; do not relax it to force a trade.

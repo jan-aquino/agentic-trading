@@ -11,6 +11,7 @@ import hashlib
 import json
 import math
 import uuid
+from decimal import Decimal, ROUND_DOWN
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Iterable, List, Mapping, Optional
 
@@ -180,6 +181,7 @@ class SimpleValueService:
         account: Mapping[str, Any],
         positions: Iterable[Mapping[str, Any]],
         candidates: Iterable[Mapping[str, Any]],
+        maximum_purchase_amount: Optional[float] = None,
     ) -> Dict[str, Any]:
         account_id = str(account.get("account_id") or account.get("account_number") or "").strip()
         if not account_id:
@@ -192,8 +194,13 @@ class SimpleValueService:
         held = {str(item.get("symbol", "")).upper() for item in positions if _number(item.get("quantity"), "quantity", minimum=0) > 0}
         result = self.shortlist(candidates)
         choice = next((item for item in result["shortlist"] if item["symbol"] not in held), None)
-        spendable = max(0.0, cash - equity * .10)
-        amount = min(spendable, equity * .20)
+        equity_decimal = Decimal(str(equity))
+        spendable = max(Decimal('0'), Decimal(str(cash)) - equity_decimal * Decimal('.10'))
+        amount_decimal = min(spendable, equity_decimal * Decimal('.20'))
+        if maximum_purchase_amount is not None:
+            requested = _number(maximum_purchase_amount, 'maximum_purchase_amount', minimum=0)
+            amount_decimal = min(amount_decimal, Decimal(str(requested)))
+        amount = float(amount_decimal.quantize(Decimal('.01'), rounding=ROUND_DOWN))
         reason = None
         intent = None
         if choice is None:
@@ -214,11 +221,12 @@ class SimpleValueService:
                 "evidence": choice["evidence"],
             }
             if choice.get("fractional_tradable"):
-                intent["dollar_amount"] = round(amount, 2)
+                intent["dollar_amount"] = amount
                 intent["amount_type"] = "dollar_amount"
             else:
-                intent["quantity"] = math.floor(amount / choice["price"])
+                intent["quantity"] = int(Decimal(str(amount)) / Decimal(str(choice["price"])))
                 intent["amount_type"] = "whole_shares"
+                intent["target_weight"] = round(intent["quantity"] * choice["price"] / equity, 6)
         return self._save_plan(account_id, "BUY_PROPOSAL", [intent] if intent else [], reason, result)
 
     def evaluate_holdings(self, holdings: Iterable[Mapping[str, Any]]) -> Dict[str, Any]:
@@ -315,8 +323,11 @@ class SimpleValueService:
             _number(account.get("cash_balance", account.get("cash")), "cash_balance", minimum=0),
             _number(account.get("buying_power"), "buying_power", minimum=0),
         )
-        notional = intent.get("dollar_amount", intent.get("quantity", 0) * fresh_price)
-        if notional > max(0.0, cash - equity * .10) + .01:
+        notional = (Decimal(str(intent['dollar_amount'])) if 'dollar_amount' in intent
+                    else Decimal(str(intent.get('quantity', 0))) * Decimal(str(fresh_price)))
+        if notional > Decimal(str(equity)) * Decimal('.20'):
+            blockers.append("POSITION_CAP_EXCEEDED")
+        if notional > max(Decimal('0'), Decimal(str(cash)) - Decimal(str(equity)) * Decimal('.10')):
             blockers.append("INSUFFICIENT_CASH_ABOVE_BUFFER")
         intent["fresh_price"] = fresh_price
         return {"execution_ready": not blockers, "blockers": blockers, "order_intent": intent}
