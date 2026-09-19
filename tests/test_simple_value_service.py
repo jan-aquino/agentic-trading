@@ -129,6 +129,61 @@ class TestSimpleValueService(unittest.TestCase):
         self.assertEqual(decision["action"], "SELL_REVIEW")
         self.assertIn("PROFIT_PROTECTION_TRAILING_DRAWDOWN", decision["severe_signals"])
 
+    def test_dashboard_snapshot_compares_purchase_metrics_with_current_research(self):
+        current = {
+            "symbol": "ACME", "company_name": "Acme Industries", "price": 110,
+            "entry_price": 100, "peak_price_since_purchase": 115,
+            "eps_ttm": 6, "prior_eps_ttm": 5, "pe_ttm": 18,
+            "sector_median_pe": 20, "last_earnings_surprise_pct": .05,
+            "guidance_direction": "unchanged", "next_earnings_date": "2026-10-20",
+            "analyst_target_mean": 130, "analyst_consensus": "buy",
+            "news_sentiment": .2, "material_negative_news": False,
+            "research_as_of": self.now.isoformat(),
+            "recent_news": [{"title": "Quarterly results", "publisher": "Acme",
+                             "url": "https://example.com/results", "impact": "positive"}],
+            "evidence": [{"title": "10-Q", "url": "https://sec.example/a"},
+                         {"title": "News", "url": "https://news.example/a"}],
+        }
+        result = self.service.build_dashboard_snapshot(
+            {"account_id": "account-5837", "portfolio_equity": 500,
+             "cash_balance": 390, "buying_power": 390},
+            [{"symbol": "ACME", "quantity": 1, "average_buy_price": 100, "price": 110}],
+            [current],
+            [{"symbol": "ACME", "company_name": "Acme Industries",
+              "purchased_at": "2026-08-01", "thesis": "Profitable at a reasonable valuation.",
+              "eps_ttm": 5, "pe_ttm": 20, "analyst_target_mean": 120}],
+        )
+        self.assertEqual(result["schema_version"], "portfolio-dashboard-v1")
+        self.assertEqual(result["account"]["account_suffix"], "5837")
+        self.assertEqual(result["account"]["invested_value"], 110)
+        self.assertEqual(result["holdings"][0]["status"], "HOLD")
+        self.assertEqual(result["holdings"][0]["metrics"]["eps_ttm"]["change"], .2)
+        self.assertEqual(result["holdings"][0]["recent_news"][0]["title"], "Quarterly results")
+
+    def test_dashboard_snapshot_keeps_holding_when_purchase_history_is_missing(self):
+        current = {
+            "symbol": "ACME", "price": 110, "entry_price": 100,
+            "peak_price_since_purchase": 115, "eps_ttm": 6,
+            "prior_eps_ttm": 5, "pe_ttm": 18, "sector_median_pe": 20,
+            "last_earnings_surprise_pct": 0, "guidance_direction": "unchanged",
+            "next_earnings_date": "2026-10-20", "analyst_target_mean": 130,
+            "analyst_consensus": "buy", "news_sentiment": 0,
+            "material_negative_news": False, "research_as_of": self.now.isoformat(),
+            "evidence": [{"title": "10-Q", "url": "https://sec.example/a"},
+                         {"title": "News", "url": "https://news.example/a"}],
+        }
+        result = self.service.build_dashboard_snapshot(
+            {"account_id": "account-5837", "portfolio_equity": 500,
+             "cash_balance": 390},
+            [{"symbol": "ACME", "quantity": 1, "average_buy_price": 100, "price": 110}],
+            [current], [],
+        )
+        holding = result["holdings"][0]
+        self.assertFalse(holding["purchase_record_available"])
+        self.assertIsNone(holding["metrics"]["eps_ttm"]["at_purchase"])
+        self.assertIsNone(holding["metrics"]["pe_ttm"]["change"])
+        self.assertEqual(holding["current_price"], 110)
+
 
 if __name__ == "__main__":
     unittest.main()

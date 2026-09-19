@@ -62,6 +62,17 @@ def evaluate_holdings(holding_research: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 @mcp.tool(annotations={"readOnlyHint": True, "destructiveHint": False, "idempotentHint": True})
+def build_portfolio_dashboard_snapshot(
+    account: Dict[str, Any],
+    positions: List[Dict[str, Any]],
+    holding_research: List[Dict[str, Any]],
+    purchase_records: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Create a private, read-only dashboard snapshot from broker and research data."""
+    return service.build_dashboard_snapshot(account, positions, holding_research, purchase_records)
+
+
+@mcp.tool(annotations={"readOnlyHint": True, "destructiveHint": False, "idempotentHint": True})
 def get_simple_plan(plan_id: str) -> Dict[str, Any]:
     """Retrieve an immutable V2 proposal for review or audit."""
     return service.get_plan(plan_id)

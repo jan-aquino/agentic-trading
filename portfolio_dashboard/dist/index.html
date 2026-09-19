@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A plain-language view of portfolio holdings, purchase metrics, news, and watch items.">
+  <title>Portfolio Monitor</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1f18'/%3E%3Cpath d='M7 22V11h4v11H7Zm7 0V6h4v16h-4Zm7 0v-8h4v8h-4Z' fill='%23b9f36b'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to holdings</a>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Simple Value Trading</p>
+      <h1>Portfolio monitor</h1>
+    </div>
+    <div class="header-actions">
+      <div class="freshness" aria-live="polite">
+        <span class="freshness-dot"></span>
+        <span id="updated-label">Loading update</span>
+      </div>
+      <label class="button button-primary" for="snapshot-file">Import update</label>
+      <input id="snapshot-file" type="file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="demo-notice" id="demo-notice">
+      <div>
+        <strong>Showing example data</strong>
+        <span>Import a snapshot from your Work monitoring run. It stays in this browser.</span>
+      </div>
+      <button class="text-button" id="reset-data" type="button" hidden>Restore example</button>
+    </section>
+
+    <section class="summary-grid" aria-label="Portfolio summary">
+      <article class="summary-card summary-card-lead">
+        <p>Portfolio value</p>
+        <strong id="portfolio-value">—</strong>
+        <span id="account-label">Account —</span>
+      </article>
+      <article class="summary-card">
+        <p>Invested</p>
+        <strong id="invested-value">—</strong>
+        <span id="holding-count">— holdings</span>
+      </article>
+      <article class="summary-card">
+        <p>Cash available</p>
+        <strong id="cash-value">—</strong>
+        <span id="cash-share">— of portfolio</span>
+      </article>
+      <article class="summary-card">
+        <p>Gain since purchase</p>
+        <strong id="return-value">—</strong>
+        <span id="gain-value">—</span>
+      </article>
+      <article class="summary-card attention-card">
+        <p>Needs attention</p>
+        <strong id="attention-count">—</strong>
+        <span id="attention-copy">—</span>
+      </article>
+    </section>
+
+    <section class="workspace">
+      <aside class="holdings-panel" aria-labelledby="holdings-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Your holdings</p>
+            <h2 id="holdings-title">Quick scan</h2>
+          </div>
+          <span class="count-pill" id="sidebar-count">0</span>
+        </div>
+        <div id="holding-list" class="holding-list"></div>
+      </aside>
+
+      <section class="detail-panel" id="holding-detail" aria-live="polite">
+        <div class="empty-state">Import a portfolio snapshot to review your holdings.</div>
+      </section>
+    </section>
+
+    <section class="plain-guide" aria-labelledby="guide-title">
+      <div>
+        <p class="eyebrow">How to use this</p>
+        <h2 id="guide-title">Three labels, one decision at a time</h2>
+      </div>
+      <div class="guide-grid">
+        <article><span class="status status-hold">Hold</span><p>The original reason for owning it still looks intact.</p></article>
+        <article><span class="status status-watch">Watch</span><p>Something changed. Pay attention, but do not act on one signal alone.</p></article>
+        <article><span class="status status-sell-review">Sell review</span><p>Several concerns or one serious event need a deliberate review. This is not an order.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="app.js" defer></script>
+</body>
+</html>

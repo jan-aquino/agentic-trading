@@ -1,0 +1,99 @@
+{
+  "schema_version": "portfolio-dashboard-v1",
+  "generated_at": "2026-09-16T14:30:00+00:00",
+  "account": {
+    "account_suffix": "DEMO",
+    "portfolio_equity": 1218.42,
+    "cash_balance": 218.42,
+    "invested_value": 1000.0,
+    "unrealized_gain": 84.6,
+    "unrealized_return": 0.0924
+  },
+  "holdings": [
+    {
+      "symbol": "ALFA",
+      "company_name": "Example Industrial Co.",
+      "quantity": 4.2,
+      "average_cost": 100.0,
+      "current_price": 112.5,
+      "market_value": 472.5,
+      "total_return": 0.125,
+      "status": "HOLD",
+      "status_reason": "The original reason for owning this stock is still supported by the latest review.",
+      "purchased_at": "2026-06-12",
+      "thesis": "The company was profitable, its earnings were growing, and its P/E was below the strategy limit when purchased.",
+      "metrics": {
+        "eps_ttm": { "at_purchase": 6.2, "current": 7.1, "change": 0.1452 },
+        "pe_ttm": { "at_purchase": 16.1, "current": 15.8, "change": -0.0186 },
+        "analyst_target": { "at_purchase": 118.0, "current": 126.0, "upside": 0.12 }
+      },
+      "next_earnings_date": "2026-10-22",
+      "analyst_consensus": "buy",
+      "signals": [],
+      "severe_signals": [],
+      "what_to_watch": [
+        "Next earnings: 2026-10-22. Check EPS and management guidance afterward.",
+        "Check whether P/E rises much faster than earnings or the sector average."
+      ],
+      "recent_news": [
+        {
+          "title": "Company confirms date for its next quarterly report",
+          "publisher": "Example issuer",
+          "url": "https://example.com",
+          "published_at": "2026-09-12",
+          "summary": "The next report will update revenue, EPS, and management guidance.",
+          "impact": "neutral"
+        },
+        {
+          "title": "Analysts raise the average price target after guidance update",
+          "publisher": "Example financial news",
+          "url": "https://example.com",
+          "published_at": "2026-09-04",
+          "summary": "The average target moved higher, but it remains a forecast rather than a guarantee.",
+          "impact": "positive"
+        }
+      ],
+      "evidence": [],
+      "research_as_of": "2026-09-16T14:15:00+00:00"
+    },
+    {
+      "symbol": "BETA",
+      "company_name": "Example Financial Group",
+      "quantity": 3.5,
+      "average_cost": 142.86,
+      "current_price": 150.71,
+      "market_value": 527.5,
+      "total_return": 0.055,
+      "status": "WATCH",
+      "status_reason": "One or more changes are worth watching, but no sale is being proposed.",
+      "purchased_at": "2026-07-08",
+      "thesis": "The company had positive EPS, a moderate P/E, and improving earnings when purchased.",
+      "metrics": {
+        "eps_ttm": { "at_purchase": 11.8, "current": 10.5, "change": -0.1102 },
+        "pe_ttm": { "at_purchase": 12.1, "current": 14.4, "change": 0.1901 },
+        "analyst_target": { "at_purchase": 165.0, "current": 161.0, "upside": 0.0683 }
+      },
+      "next_earnings_date": "2026-10-15",
+      "analyst_consensus": "hold",
+      "signals": ["EPS_DECLINED_AT_LEAST_10_PERCENT"],
+      "severe_signals": [],
+      "what_to_watch": [
+        "Earnings per share have fallen at least 10%.",
+        "Next earnings: 2026-10-15. Check EPS and management guidance afterward."
+      ],
+      "recent_news": [
+        {
+          "title": "Management expects costs to remain elevated next quarter",
+          "publisher": "Example business news",
+          "url": "https://example.com",
+          "published_at": "2026-09-10",
+          "summary": "Higher costs could keep pressure on earnings per share in the next report.",
+          "impact": "negative"
+        }
+      ],
+      "evidence": [],
+      "research_as_of": "2026-09-16T14:20:00+00:00"
+    }
+  ],
+  "disclaimer": "Example research summary only. HOLD, WATCH, and SELL REVIEW are prompts for review, not orders."
+}

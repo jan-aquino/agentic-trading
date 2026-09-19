@@ -120,12 +120,23 @@ class SimpleValueService:
                 "next_earnings_date", "analyst_target_mean", "analyst_consensus",
                 "news_sentiment", "material_negative_news", "research_as_of", "evidence",
             ],
+            "dashboard_purchase_record_fields": [
+                "symbol", "company_name", "purchased_at", "thesis",
+                "eps_ttm", "pe_ttm", "analyst_target_mean",
+            ],
+            "dashboard_position_fields": [
+                "symbol", "quantity", "average_buy_price", "price",
+            ],
+            "dashboard_news_fields": [
+                "title", "publisher", "url", "published_at", "summary", "impact",
+            ],
             "source_rules": [
                 "Use a primary earnings release or SEC filing for reported EPS and earnings claims.",
                 "Use a clearly identified market-data source for price and P/E.",
                 "Use reputable published reporting for analyst targets and material news.",
                 "Record title, URL, publisher, and observed_at for every source.",
                 "Do not present analyst targets or news predictions as facts.",
+                "Preserve purchase-date metrics and thesis; do not reconstruct them from current data.",
             ],
         }
 
@@ -296,6 +307,168 @@ class SimpleValueService:
                 "note": "Analyst targets and news are supporting signals, never sole authority.",
             })
         return {"policy_version": self.policy_version, "decisions": decisions}
+
+    def build_dashboard_snapshot(
+        self,
+        account: Mapping[str, Any],
+        positions: Iterable[Mapping[str, Any]],
+        holding_research: Iterable[Mapping[str, Any]],
+        purchase_records: Iterable[Mapping[str, Any]],
+    ) -> Dict[str, Any]:
+        """Build the read-only snapshot consumed by the portfolio dashboard.
+
+        Robinhood remains authoritative for quantities, cost basis, cash, and
+        prices. Research supplies current fundamentals and news. Purchase
+        records preserve the original decision instead of reconstructing it
+        from today's data.
+        """
+        equity = _number(account.get("portfolio_equity"), "portfolio_equity", minimum=0)
+        cash = _number(
+            account.get("cash_balance", account.get("cash")), "cash_balance", minimum=0
+        )
+        researched = {str(item.get("symbol", "")).strip().upper(): dict(item)
+                      for item in holding_research}
+        purchases = {str(item.get("symbol", "")).strip().upper(): dict(item)
+                     for item in purchase_records}
+        position_rows = [dict(item) for item in positions]
+        evaluated = self.evaluate_holdings(
+            researched[str(item.get("symbol", "")).strip().upper()]
+            for item in position_rows
+            if str(item.get("symbol", "")).strip().upper() in researched
+        )
+        decisions = {item["symbol"]: item for item in evaluated["decisions"]}
+
+        holdings = []
+        total_cost = 0.0
+        total_value = 0.0
+        for position in position_rows:
+            symbol = str(position.get("symbol", "")).strip().upper()
+            if not symbol:
+                raise SimpleValueInputError("position symbol is required")
+            if symbol not in researched:
+                raise SimpleValueInputError(f"{symbol} is missing current holding research")
+            current = researched[symbol]
+            purchase = purchases.get(symbol, {})
+            decision = decisions[symbol]
+            quantity = _number(position.get("quantity"), f"{symbol}.quantity", minimum=0)
+            average_cost = _number(
+                position.get("average_buy_price", current.get("entry_price")),
+                f"{symbol}.average_buy_price", minimum=.01,
+            )
+            current_price = _number(
+                position.get("price", current.get("price")), f"{symbol}.price", minimum=.01
+            )
+            market_value = quantity * current_price
+            cost = quantity * average_cost
+            total_value += market_value
+            total_cost += cost
+            eps_at_purchase = (
+                _number(purchase["eps_ttm"], f"{symbol}.purchase.eps_ttm")
+                if purchase.get("eps_ttm") is not None else None
+            )
+            pe_at_purchase = (
+                _number(purchase["pe_ttm"], f"{symbol}.purchase.pe_ttm", minimum=.01)
+                if purchase.get("pe_ttm") is not None else None
+            )
+            current_eps = _number(current.get("eps_ttm"), f"{symbol}.eps_ttm")
+            current_pe = _number(current.get("pe_ttm"), f"{symbol}.pe_ttm", minimum=.01)
+            target = _number(
+                current.get("analyst_target_mean"), f"{symbol}.analyst_target_mean", minimum=0
+            )
+            news = []
+            for item in list(current.get("recent_news") or [])[:5]:
+                news.append({
+                    "title": str(item.get("title", "")).strip(),
+                    "publisher": str(item.get("publisher", "")).strip(),
+                    "url": str(item.get("url", "")).strip(),
+                    "published_at": item.get("published_at") or item.get("observed_at"),
+                    "summary": str(item.get("summary", "")).strip(),
+                    "impact": str(item.get("impact", "neutral")).lower(),
+                })
+            holdings.append({
+                "symbol": symbol,
+                "company_name": purchase.get("company_name") or current.get("company_name") or symbol,
+                "quantity": round(quantity, 6),
+                "average_cost": round(average_cost, 2),
+                "current_price": round(current_price, 2),
+                "market_value": round(market_value, 2),
+                "total_return": decision["total_return"],
+                "status": decision["action"],
+                "status_reason": self._dashboard_status_reason(decision),
+                "purchased_at": purchase.get("purchased_at"),
+                "thesis": str(purchase.get("thesis", "")).strip(),
+                "purchase_record_available": bool(purchase),
+                "metrics": {
+                    "eps_ttm": {"at_purchase": eps_at_purchase, "current": current_eps,
+                                "change": round(current_eps / abs(eps_at_purchase) - 1, 4)
+                                if eps_at_purchase else None},
+                    "pe_ttm": {"at_purchase": pe_at_purchase, "current": current_pe,
+                               "change": round(current_pe / pe_at_purchase - 1, 4)
+                               if pe_at_purchase else None},
+                    "analyst_target": {"at_purchase": purchase.get("analyst_target_mean"),
+                                       "current": target,
+                                       "upside": decision["analyst_implied_upside"]},
+                },
+                "next_earnings_date": current.get("next_earnings_date"),
+                "analyst_consensus": current.get("analyst_consensus"),
+                "signals": decision["signals"],
+                "severe_signals": decision["severe_signals"],
+                "what_to_watch": self._dashboard_watch_items(current, decision),
+                "recent_news": news,
+                "evidence": list(current.get("evidence") or []),
+                "research_as_of": current.get("research_as_of"),
+            })
+
+        account_suffix = str(account.get("account_id") or account.get("account_number") or "")[-4:]
+        return {
+            "schema_version": "portfolio-dashboard-v1",
+            "generated_at": self.clock().astimezone(timezone.utc).isoformat(),
+            "account": {
+                "account_suffix": account_suffix,
+                "portfolio_equity": round(equity, 2),
+                "cash_balance": round(cash, 2),
+                "invested_value": round(total_value, 2),
+                "unrealized_gain": round(total_value - total_cost, 2),
+                "unrealized_return": round(total_value / total_cost - 1, 4) if total_cost else 0,
+            },
+            "holdings": sorted(holdings, key=lambda item: (item["status"] == "HOLD", item["symbol"])),
+            "disclaimer": "Research summary only. HOLD, WATCH, and SELL REVIEW are prompts for review, not orders.",
+        }
+
+    @staticmethod
+    def _dashboard_status_reason(decision: Mapping[str, Any]) -> str:
+        if decision["action"] == "SELL_REVIEW":
+            return "Important changes need your review before deciding whether to sell."
+        if decision["action"] == "WATCH":
+            return "One or more changes are worth watching, but no sale is being proposed."
+        return "The original reason for owning this stock is still supported by the latest review."
+
+    @staticmethod
+    def _dashboard_watch_items(
+        research: Mapping[str, Any], decision: Mapping[str, Any]
+    ) -> List[str]:
+        labels = {
+            "EPS_DECLINED_AT_LEAST_10_PERCENT": "Earnings per share have fallen at least 10%.",
+            "VALUATION_EXPANDED": "The stock has become expensive relative to its sector.",
+            "MATERIAL_EARNINGS_MISS": "The latest earnings result missed expectations materially.",
+            "GUIDANCE_DETERIORATED": "Management lowered or withdrew its outlook.",
+            "ANALYST_TARGET_BELOW_PRICE": "The average analyst target is below the current price.",
+            "STRONGLY_NEGATIVE_NEWS": "Recent verified news is strongly negative.",
+            "PROFIT_TARGET_REACHED_REASSESS": "The position has gained 20%; reassess the thesis and valuation.",
+            "EPS_BECAME_NON_POSITIVE": "Trailing earnings per share are no longer positive.",
+            "MATERIAL_NEGATIVE_EVENT": "A verified material negative event was reported.",
+            "PROFIT_PROTECTION_TRAILING_DRAWDOWN": "The stock retreated at least 12% after reaching the profit target.",
+            "HIGH_GAIN_WITH_EPS_OR_VALUATION_DETERIORATION": "A large gain now comes with weaker earnings or valuation.",
+        }
+        items = [labels[signal] for signal in decision["severe_signals"] + decision["signals"]
+                 if signal in labels]
+        earnings_date = research.get("next_earnings_date")
+        if earnings_date:
+            items.append(f"Next earnings: {earnings_date}. Check EPS and management guidance afterward.")
+        if not items:
+            items.append("Watch the next earnings report for EPS growth and any change in management guidance.")
+            items.append("Check whether P/E rises much faster than earnings or the sector average.")
+        return items
 
     def get_plan(self, plan_id: str) -> Dict[str, Any]:
         return self.store.load(plan_id)

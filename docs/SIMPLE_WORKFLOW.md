@@ -13,6 +13,10 @@ Work run -> web + primary-source research -> shortlist_value_stocks
 
 Monitor run -> research every holding -> evaluate_holdings
   -> HOLD / WATCH / SELL_REVIEW -> user review before any sell
+
+Dashboard update -> Robinhood positions + current holding research
+  + saved purchase records -> build_portfolio_dashboard_snapshot
+  -> import the JSON snapshot into the private dashboard
 ```
 
 ## Why “high EPS” is not used alone
@@ -61,6 +65,22 @@ Profit protection is deliberately conditional:
 
 The monitor therefore requires `entry_price` and `peak_price_since_purchase`
 from Robinhood/account history or a locally maintained position ledger.
+
+## Portfolio dashboard
+
+The dashboard is a read-only explanation layer. It compares the metrics saved
+when a stock was purchased with the latest holding research, then shows the
+current return, next earnings date, recent news, and plain-language watch
+items. It does not connect to Robinhood or place orders.
+
+Call `build_portfolio_dashboard_snapshot` after a monitoring run. Its inputs
+combine Robinhood account/position facts, the same current research passed to
+`evaluate_holdings`, and the purchase record retained after the original fill.
+Import the returned JSON into the dashboard. The imported snapshot stays in
+that browser's local storage; the hosted dashboard contains example data only.
+
+See [portfolio dashboard](PORTFOLIO_DASHBOARD.md) for the exact data flow and
+local preview instructions.
 
 ## ChatGPT Work orchestration prompt
 

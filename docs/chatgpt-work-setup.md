@@ -18,7 +18,8 @@ appropriate authenticated access before sending real account data.
 After updating the hosted service from main, refresh the analysis connection
 in Work and call get_simple_policy. It must return simple-value-v2. Confirm
 get_simple_research_requirements, shortlist_value_stocks, propose_purchase,
-get_simple_plan, validate_simple_purchase, and evaluate_holdings are available.
+get_simple_plan, validate_simple_purchase, evaluate_holdings, and
+build_portfolio_dashboard_snapshot are available.
 A Git push alone does not establish that the remote server has deployed.
 
 Connect Robinhood separately to the intended account and enable web research.

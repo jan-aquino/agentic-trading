@@ -15,6 +15,7 @@ approval of an unspecified order.
 Call get_simple_policy and get_simple_research_requirements. Require policy
 simple-value-v2 and these tools: shortlist_value_stocks, propose_purchase,
 get_simple_plan, validate_simple_purchase, evaluate_holdings.
+Also require build_portfolio_dashboard_snapshot when a dashboard update is requested.
 If only V1 tools such as generate_trade_plan are available, report that the
 deployment needs updating; do not translate V2 inputs into V1.
 Discover the actual Robinhood read, review, placement, and order-status tools.
@@ -126,4 +127,21 @@ refresh holdings and quote, obtain Robinhood review and final approval, then
 place and verify using the same process. Do not fund a buy with an unfilled
 sale or unavailable proceeds.
 At the end give a concise research, proposal/order, and monitoring summary.
+
+8. Update the portfolio dashboard
+After holding research and evaluate_holdings are complete, call
+build_portfolio_dashboard_snapshot. Use:
+account={account_id, portfolio_equity, cash_balance, buying_power};
+positions from Robinhood with symbol, quantity, average_buy_price, and current
+price; holding_research with the complete current monitoring packets plus up to
+five recent_news records per holding; and purchase_records retained from the
+original filled-order record with symbol, company_name, purchased_at, thesis,
+eps_ttm, pe_ttm, and analyst_target_mean as they were known at purchase.
+Do not substitute current figures for missing purchase-date metrics. If a
+purchase record is missing, pass only the purchase records you can verify;
+the dashboard will show unavailable baselines for the other holdings.
+Return the complete tool result as a downloadable JSON file named
+portfolio-snapshot.json. Tell me to use Import update in the Portfolio Monitor.
+The dashboard is read-only and its HOLD, WATCH, or SELL REVIEW labels do not
+authorize an order.
 ```
