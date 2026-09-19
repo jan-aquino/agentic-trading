@@ -19,7 +19,15 @@ After updating the hosted service from main, refresh the analysis connection
 in Work and call get_simple_policy. It must return simple-value-v2. Confirm
 get_simple_research_requirements, shortlist_value_stocks, propose_purchase,
 get_simple_plan, validate_simple_purchase, evaluate_holdings, and
-build_portfolio_dashboard_snapshot are available.
+build_portfolio_dashboard_snapshot (or its alias build_portfolio_snapshot) are
+available. The checked-in Trading Analysis plugin points at the Railway URL;
+ChatGPT Work may retain an older connection's tool catalog until that plugin
+or MCP connection is refreshed and a new Work task is started. In ChatGPT,
+open Plugins, select the Trading Analysis connection, and choose Refresh.
+Verify its endpoint is
+`https://trading-analysis-mcp-production.up.railway.app/mcp` and that its tool
+list includes a dashboard builder. If Refresh is unavailable, reconnect the
+MCP endpoint or ask the workspace plugin owner to publish an updated version.
 A Git push alone does not establish that the remote server has deployed.
 
 Connect Robinhood separately to the intended account and enable web research.

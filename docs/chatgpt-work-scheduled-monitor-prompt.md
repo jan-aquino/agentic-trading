@@ -3,7 +3,8 @@
 Use this for the scheduled, proposal-only run. It replaces the older scheduled
 prompt. It does not authorize brokerage order review or execution. Before the
 first scheduled run, refresh the Trading Analysis connection and confirm that
-`build_portfolio_dashboard_snapshot` is available in a new Work task.
+`build_portfolio_dashboard_snapshot` or its alias `build_portfolio_snapshot` is
+available in a new Work task.
 
 ```text
 Run my Simple Value Trading V2 scheduled workflow using real web research, the
@@ -25,7 +26,8 @@ already closed. Do not queue after-hours orders or claim continuous monitoring.
 Before reading Robinhood or researching stocks, confirm that the connected
 Trading Analysis tools include get_simple_policy,
 get_simple_research_requirements, shortlist_value_stocks, propose_purchase,
-evaluate_holdings, and build_portfolio_dashboard_snapshot. Call the two policy
+evaluate_holdings, and either build_portfolio_dashboard_snapshot or
+build_portfolio_snapshot. Call the two policy
 and requirements tools and require policy_version simple-value-v2. If the
 builder is missing, stop and report that the Work connection's tool inventory
 is stale; do not repeat account reads or fabricate a dashboard file. The live
@@ -86,7 +88,8 @@ Do not call Robinhood order review or placement in this scheduled run. A later
 interactive run requires fresh checks and explicit approvals.
 
 5. Produce the dashboard update
-Call build_portfolio_dashboard_snapshot with the fresh account; every current
+Call build_portfolio_dashboard_snapshot (or its identical alias
+build_portfolio_snapshot) with the fresh account; every current
 Robinhood position as {symbol, quantity, average_buy_price, price}; the same
 fully researched holding packets used for monitoring, including recent_news;
 and verified purchase_records where available. Each purchase record should

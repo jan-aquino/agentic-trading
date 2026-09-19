@@ -1,7 +1,8 @@
 {
   "mcpServers": {
     "trading-analysis": {
-      "url": "http://127.0.0.1:8000/mcp"
+      "type": "http",
+      "url": "https://trading-analysis-mcp-production.up.railway.app/mcp"
     }
   }
 }

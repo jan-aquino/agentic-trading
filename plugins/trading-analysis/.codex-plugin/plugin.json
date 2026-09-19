@@ -1,18 +1,18 @@
 {
   "name": "trading-analysis",
-  "version": "0.4.0",
-  "description": "Dynamic investment research, portfolio construction, and expiring trade plans",
+  "version": "0.5.0",
+  "description": "Proposal-only value-stock research and portfolio monitoring",
   "author": {
     "name": "Local developer"
   },
   "interface": {
     "displayName": "Trading Analysis",
-    "shortDescription": "Turn researched candidates into constrained portfolio plans.",
-    "longDescription": "Validates evidence, scores dynamic candidates, constructs mandate-aware portfolios, and revalidates proposal-only trade plans. It cannot place brokerage orders.",
+    "shortDescription": "Research stocks and monitor holdings without placing orders.",
+    "longDescription": "Screens sourced value-stock research, sizes one proposal at a time, evaluates holdings, and builds read-only portfolio dashboard snapshots. It cannot place brokerage orders.",
     "developerName": "Local developer",
     "category": "Finance",
-    "capabilities": ["Candidate research", "Portfolio construction", "Fractional sizing", "Pre-execution revalidation"],
-    "defaultPrompt": "Read the research requirements, discover and research candidates, then generate a mandate-aware proposal-only portfolio plan for my review."
+    "capabilities": ["Value-stock screening", "Buy proposals", "Holding review", "Dashboard snapshots"],
+    "defaultPrompt": "Review my holdings and build a portfolio dashboard snapshot without placing orders."
   },
   "mcpServers": "./.mcp.json"
 }
